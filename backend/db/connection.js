@@ -3,15 +3,27 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
-const pool = new Pool({
-  host: process.env.PGHOST || 'localhost',
-  port: parseInt(process.env.PGPORT || '5432'),
-  database: process.env.PGDATABASE || 'alas_mariposa_db',
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: true } : undefined,
-  connectionTimeoutMillis: 2000,
-});
+function buildPoolConfig() {
+  if (process.env.DATABASE_URL) {
+    return {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: true },
+      connectionTimeoutMillis: 2000,
+    };
+  }
+
+  return {
+    host: process.env.PGHOST || 'localhost',
+    port: parseInt(process.env.PGPORT || '5432'),
+    database: process.env.PGDATABASE || 'alas_mariposa_db',
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: true } : undefined,
+    connectionTimeoutMillis: 2000,
+  };
+}
+
+const pool = new Pool(buildPoolConfig());
 
 let isConnected = false;
 
