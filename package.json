@@ -1,0 +1,27 @@
+{
+  "name": "alas-de-mariposa",
+  "version": "1.0.0",
+  "description": "Plataforma lúdica comunitaria e interactiva para niñas y niños con arquitectura hexagonal y panel de administración.",
+  "main": "backend/server.js",
+  "scripts": {
+    "test": "node tests/unit_tests.js",
+    "start:server": "node backend/server.js",
+    "start": "node backend/server.js"
+  },
+  "keywords": [
+    "vertical-slice",
+    "hexagonal-architecture",
+    "children",
+    "postgres",
+    "telemetry"
+  ],
+  "author": "Fundación / Alas de Mariposa",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "pg": "^8.23.1"
+  }
+}
