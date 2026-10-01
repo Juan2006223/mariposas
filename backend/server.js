@@ -25,8 +25,9 @@ app.use(securityHeaders);
 app.use(cors(buildCorsOptions()));
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '1mb' }));
 
-// Servir frontend estático desacoplado
-app.use(express.static(path.join(__dirname, '../frontend')));
+if (process.env.SERVE_FRONTEND === 'true') {
+  app.use(express.static(path.join(__dirname, '../frontend')));
+}
 
 // Inyección de dependencias
 const perfilRepo = new PerfilPostgresRepository();
