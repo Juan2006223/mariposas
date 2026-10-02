@@ -102,6 +102,24 @@ class ProgresoPostgresRepository {
     this.memoriaArtefactos = this.memoriaArtefactos.filter(a => a.id !== id);
     return this.memoriaArtefactos.length < before;
   }
+
+  async borrarPorNino(ninoId) {
+    if (isPostgresConnected()) {
+      try {
+        await pool.query('DELETE FROM mural_artefactos WHERE nino_id = $1', [ninoId]);
+        await pool.query('DELETE FROM progreso_estaciones WHERE nino_id = $1', [ninoId]);
+      } catch (err) {
+        console.warn('Fallo en Postgres (borrar datos de niño):', err.message);
+      }
+    }
+    const beforeProgress = this.memoriaProgreso.size;
+    const beforeArt = this.memoriaArtefactos.length;
+    for (const [id, item] of this.memoriaProgreso.entries()) {
+      if (item.ninoId === ninoId || item.nino_id === ninoId) this.memoriaProgreso.delete(id);
+    }
+    this.memoriaArtefactos = this.memoriaArtefactos.filter(a => (a.ninoId || a.nino_id) !== ninoId);
+    return beforeProgress !== this.memoriaProgreso.size || beforeArt !== this.memoriaArtefactos.length;
+  }
 }
 
 module.exports = { ProgresoPostgresRepository };

@@ -109,13 +109,16 @@ function renderParticipantCards(profiles, events, muralItems) {
     const pid = p.id || p.nino_id;
     const evs = events.filter(e => sameChild(e.nino_id || e.ninoId, pid) || ((e.detalles || {}).nombre || '').includes(name.split(' ')[0])).slice(0, 6);
     const arts = muralItems.filter(a => sameChild(a.nino_id || a.ninoId, pid) || (a.autor || '').toLowerCase() === name.toLowerCase());
+    const created = p.creado_en || p.creadoEn || '';
     return `<section style="border:1px solid var(--line);background:var(--card);border-radius:14px;margin-bottom:10px;overflow:hidden;">
-      <button onclick="toggleParticipantDetail(${i})" style="width:100%;border:0;background:transparent;color:var(--ink);cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;text-align:left;">
-        <span style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--violeta),var(--rosa));display:grid;place-items:center;font-size:1.35rem;">${p.avatar || '🦋'}</span>
-        <span><strong style="display:block;color:var(--violeta-suave);font-size:1rem;">${name}</strong><small style="color:var(--ink-soft);">${p.edad} años · ${p.grupo_edad || p.grupoEdad || ''} · ${arts.length} creación(es)</small></span>
-        <span style="background:rgba(255,200,87,.16);border:1px solid rgba(255,200,87,.4);color:var(--sol);border-radius:999px;padding:9px 12px;font-weight:900;">Ver actividades</span>
-      </button>
+      <div style="padding:14px 16px;display:grid;grid-template-columns:56px 1fr auto auto;gap:12px;align-items:center;text-align:left;">
+        <span style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--violeta),var(--rosa));display:grid;place-items:center;font-size:1.8rem;line-height:1;">${avatarIcon(p.avatar)}</span>
+        <span style="min-width:0;"><strong style="display:block;color:var(--violeta-suave);font-size:1.05rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(name)}</strong><small style="color:var(--ink-soft);">${p.edad} años · ${p.grupo_edad || p.grupoEdad || ''} · ${arts.length} creación(es)</small></span>
+        <button onclick="toggleParticipantDetail(${i})" style="background:rgba(255,200,87,.16);border:1px solid rgba(255,200,87,.4);color:var(--sol);border-radius:999px;padding:10px 14px;font-weight:900;cursor:pointer;">Ver actividades</button>
+        <button onclick="deleteParticipant('${attrEscape(pid)}','${attrEscape(name)}')" title="Borrar usuario" style="background:rgba(217,70,181,.20);border:1px solid rgba(217,70,181,.55);color:var(--ink);border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer;">Borrar niño/a</button>
+      </div>
       <div id="childDetail${i}" style="display:none;border-top:1px solid var(--line);padding:12px 16px;">
+        <div style="color:var(--ink-soft);font-size:.78rem;margin-bottom:10px;">ID: ${escapeHtml(pid || 'sin-id')}${created ? ' · Registro: ' + escapeHtml(formatDate(created)) : ''}</div>
         ${renderChildActivity(evs, arts)}
       </div>
     </section>`;
@@ -131,6 +134,33 @@ function renderChildActivity(events, arts) {
   const eventHtml = events.length ? events.map(e => `<li style="margin:6px 0;color:var(--ink-soft);"><b style="color:var(--ink);">${e.tipo_evento || e.tipoEvento || 'Evento'}</b> · ${((e.detalles || {}).estacion) ? 'Estación ' + (e.detalles || {}).estacion : (e.categoria || '')}</li>`).join('') : '<li style="color:var(--ink-soft);">Sin eventos recientes.</li>';
   const artHtml = arts.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,210px));gap:10px;margin-top:10px;">${arts.map(renderMuralAdminCard).join('')}</div>` : '<div style="color:var(--ink-soft);margin-top:8px;">Sin creaciones todavía.</div>';
   return `<div style="display:grid;grid-template-columns:minmax(180px,.8fr) 1.2fr;gap:12px;"><div><b style="color:var(--sol);">Actividades</b><ul style="padding-left:18px;margin:8px 0 0;">${eventHtml}</ul></div><div><b style="color:var(--sol);">Creaciones CRUD</b>${artHtml}</div></div>`;
+}
+
+function avatarIcon(avatar) {
+  const map = {
+    butterfly: '🦋',
+    mariposa_azul: '🦋',
+    mariposa_sol: '🦋',
+    oruga: '🐛',
+    oruga_valiente: '🐛',
+    colibri: '🐦',
+    flor: '✿',
+    perrito: '🐶'
+  };
+  return map[avatar] || '🦋';
+}
+
+function formatDate(value) {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('es-CO');
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+function attrEscape(value) {
+  return escapeHtml(value).replace(/\\/g, '\\\\');
 }
 
 function renderMuralByChild(items) {
@@ -165,6 +195,16 @@ async function deleteMuralItem(id) {
   if (!confirm('¿Borrar esta creación del mural?')) return;
   const resp = await ApiClient.borrarArtefactoMural(id, token);
   if (!resp || !resp.success) return alert('No se pudo borrar.');
+  const panel = document.getElementById('adminDashboardOverlay');
+  if (panel) cargarMetricasEnDashboard(panel);
+}
+
+async function deleteParticipant(id, name) {
+  const token = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '';
+  if (!id) return alert('Este usuario no tiene id válido para borrar.');
+  if (!confirm(`¿Borrar a ${name} y sus actividades/creaciones?`)) return;
+  const resp = await ApiClient.borrarPerfil(id, token);
+  if (!resp || !resp.success) return alert(resp && resp.error ? resp.error : 'No se pudo borrar el usuario.');
   const panel = document.getElementById('adminDashboardOverlay');
   if (panel) cargarMetricasEnDashboard(panel);
 }

@@ -153,6 +153,22 @@ async function runSecurityTests() {
     });
     assert.strictEqual(allowedAdmin.status, 200);
     console.log('✅ Seguridad HTTP: token administrativo válido permite acceso.');
+
+    const created = await fetch(`${baseUrl}/api/perfiles`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: 'Usuario Borrable', avatar: 'butterfly', edad: 8 }),
+    });
+    const createdBody = await created.json();
+    assert.strictEqual(created.status, 201);
+    const blockedDelete = await fetch(`${baseUrl}/api/perfiles/${createdBody.data.id}`, { method: 'DELETE' });
+    assert.strictEqual(blockedDelete.status, 401);
+    const allowedDelete = await fetch(`${baseUrl}/api/perfiles/${createdBody.data.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer token-pruebas' },
+    });
+    assert.strictEqual(allowedDelete.status, 200);
+    console.log('✅ Seguridad HTTP: borrado de usuarios requiere token admin y funciona.');
   } finally {
     server.close();
     process.env.NODE_ENV = previousNodeEnv;

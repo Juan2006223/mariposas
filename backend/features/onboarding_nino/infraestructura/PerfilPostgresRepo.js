@@ -63,6 +63,18 @@ class PerfilPostgresRepository {
     }
     return this.memoria.get(id) || null;
   }
+
+  async borrar(id) {
+    if (isPostgresConnected()) {
+      try {
+        const res = await pool.query('DELETE FROM perfiles_ninos WHERE id = $1 RETURNING id', [id]);
+        if (res.rowCount > 0) return true;
+      } catch (err) {
+        console.warn('Fallo en Postgres al borrar perfil:', err.message);
+      }
+    }
+    return this.memoria.delete(id);
+  }
 }
 
 module.exports = { PerfilPostgresRepository };

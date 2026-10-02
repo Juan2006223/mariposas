@@ -55,8 +55,8 @@ class ObtenerDashboardMetricasUseCase {
         totalArtefactosMural: artefactos.length,
       },
       estacionesVisitadas,
-      ultimosPerfiles: perfiles.slice(0, 10),
-      ultimosEventos: eventos.slice(0, 15),
+      ultimosPerfiles: perfiles.slice(0, 50),
+      ultimosEventos: eventos.slice(0, 200),
     };
   }
 }

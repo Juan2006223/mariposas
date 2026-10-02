@@ -27,7 +27,25 @@ class ObtenerPerfilesUseCase {
   }
 }
 
+class BorrarPerfilNinoUseCase {
+  constructor(perfilRepository, progresoRepository, metricasRepository) {
+    this.perfilRepository = perfilRepository;
+    this.progresoRepository = progresoRepository;
+    this.metricasRepository = metricasRepository;
+  }
+
+  async ejecutar(id) {
+    if (!id) throw new Error('El id del perfil es requerido.');
+    const perfil = await this.perfilRepository.buscarPorId(id);
+    if (!perfil) return false;
+    if (this.metricasRepository.borrarPorNino) await this.metricasRepository.borrarPorNino(id);
+    if (this.progresoRepository.borrarPorNino) await this.progresoRepository.borrarPorNino(id);
+    return await this.perfilRepository.borrar(id);
+  }
+}
+
 module.exports = {
+  BorrarPerfilNinoUseCase,
   RegistrarPerfilNinoUseCase,
   ObtenerPerfilesUseCase,
 };

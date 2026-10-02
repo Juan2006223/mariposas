@@ -11,7 +11,7 @@ const {
 } = require('./security');
 
 const { PerfilPostgresRepository } = require('./features/onboarding_nino/infraestructura/PerfilPostgresRepo');
-const { RegistrarPerfilNinoUseCase, ObtenerPerfilesUseCase } = require('./features/onboarding_nino/aplicacion/CasosDeUsoPerfil');
+const { BorrarPerfilNinoUseCase, RegistrarPerfilNinoUseCase, ObtenerPerfilesUseCase } = require('./features/onboarding_nino/aplicacion/CasosDeUsoPerfil');
 
 const { ProgresoPostgresRepository } = require('./features/estaciones_experiencia/infraestructura/ProgresoPostgresRepo');
 const { GuardarProgresoUseCase, ObtenerProgresoNinoUseCase, GuardarArtefactoMuralUseCase } = require('./features/estaciones_experiencia/aplicacion/CasosDeUsoProgreso');
@@ -36,6 +36,7 @@ const metricasRepo = new MetricasPostgresRepository();
 
 const registrarPerfilUC = new RegistrarPerfilNinoUseCase(perfilRepo);
 const obtenerPerfilesUC = new ObtenerPerfilesUseCase(perfilRepo);
+const borrarPerfilUC = new BorrarPerfilNinoUseCase(perfilRepo, progresoRepo, metricasRepo);
 const guardarProgresoUC = new GuardarProgresoUseCase(progresoRepo);
 const obtenerProgresoUC = new ObtenerProgresoNinoUseCase(progresoRepo);
 const guardarArtefactoUC = new GuardarArtefactoMuralUseCase(progresoRepo);
@@ -62,6 +63,16 @@ app.get('/api/perfiles', async (req, res) => {
   try {
     const perfiles = await obtenerPerfilesUC.ejecutar();
     res.json({ success: true, data: perfiles });
+  } catch (err) {
+    res.status(500).json({ success: false, error: publicError(err) });
+  }
+});
+
+app.delete('/api/perfiles/:id', requireAdminToken, async (req, res) => {
+  try {
+    const deleted = await borrarPerfilUC.ejecutar(req.params.id);
+    if (!deleted) return res.status(404).json({ success: false, error: 'Perfil no encontrado.' });
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: publicError(err) });
   }

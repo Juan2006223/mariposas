@@ -45,6 +45,19 @@ class MetricasPostgresRepository {
     }
     return [...this.memoriaEventos].reverse();
   }
+
+  async borrarPorNino(ninoId) {
+    if (isPostgresConnected()) {
+      try {
+        await pool.query('DELETE FROM metricas_eventos WHERE nino_id = $1', [ninoId]);
+      } catch (err) {
+        console.warn('Fallo en Postgres al borrar métricas del niño:', err.message);
+      }
+    }
+    const before = this.memoriaEventos.length;
+    this.memoriaEventos = this.memoriaEventos.filter(e => (e.ninoId || e.nino_id) !== ninoId);
+    return this.memoriaEventos.length < before;
+  }
 }
 
 module.exports = { MetricasPostgresRepository };
