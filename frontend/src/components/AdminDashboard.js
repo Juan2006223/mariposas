@@ -41,7 +41,10 @@ async function cargarMetricasEnDashboard(container) {
     return;
   }
 
-  const resp = await ApiClient.obtenerDashboard(adminToken);
+  const [resp, muralResp] = await Promise.all([
+    ApiClient.obtenerDashboard(adminToken),
+    ApiClient.listarMural ? ApiClient.listarMural() : Promise.resolve({ success: false, data: [] })
+  ]);
   const content = document.getElementById('dashContent');
   if (!content) return;
 
@@ -61,6 +64,7 @@ async function cargarMetricasEnDashboard(container) {
   }
 
   const { resumen, estacionesVisitadas, ultimosPerfiles, ultimosEventos } = resp.data;
+  const muralItems = muralResp && muralResp.success ? muralResp.data.slice(0, 12) : [];
   const dbStatus = resp.postgresConectado ? '🟢 PostgreSQL Activo' : '🟡 Modo Fallback Memoria';
 
   content.innerHTML = `
@@ -101,7 +105,7 @@ async function cargarMetricasEnDashboard(container) {
     </div>
 
     <!-- Tabla de Participantes Recientes -->
-    <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:16px; text-align:left;">
+      <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:16px; text-align:left;">
       <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 10px;">🧒 Últimos Participantes</h3>
       <div style="overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; font-size:0.82rem; color:var(--ink-soft);">
@@ -125,6 +129,28 @@ async function cargarMetricasEnDashboard(container) {
           </tbody>
         </table>
       </div>
+    </div>
+
+    <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:20px; text-align:left;">
+      <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 10px;">🎨 Creaciones guardadas</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px;">
+        ${muralItems.length === 0 ? '<div style="color:var(--ink-soft);">Aún no hay creaciones guardadas.</div>' : muralItems.map(item => renderMuralAdminCard(item)).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderMuralAdminCard(item) {
+  let content = item.contenido || {};
+  if (typeof content === 'string') {
+    try { content = JSON.parse(content); } catch (e) { content = {}; }
+  }
+  const img = content.src ? `<img src="${content.src}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px;">` : `<div style="width:100%; aspect-ratio:1; display:grid; place-items:center; border-radius:10px; background:var(--card); font-size:2rem;">${content.avatar || '🦋'}</div>`;
+  return `
+    <div style="background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px;">
+      ${img}
+      <div style="color:var(--ink); font-weight:800; margin-top:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.autor || 'Anónimo/a'}</div>
+      <div style="color:var(--ink-soft); font-size:0.75rem;">${item.tipo || 'mural'}</div>
     </div>
   `;
 }

@@ -415,6 +415,19 @@ button{ font-family:'Nunito',sans-serif; }
 .name-gate .emoji{ font-size:4.4rem; }
 .name-gate input{ max-width:220px; text-align:center; }
 .name-gate button{ max-width:220px; margin-top:6px; }
+.kid-form{ width:min(420px,92%); display:grid; gap:10px; margin-top:10px; }
+.kid-form .input-field{ width:100%; max-width:none; text-align:center; }
+.avatar-pick{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.avatar-btn{
+  aspect-ratio:1; border-radius:18px; border:2px solid transparent; background:var(--card2);
+  color:var(--ink); font-size:1.55rem; cursor:pointer; box-shadow:0 8px 18px rgba(0,0,0,.18);
+  transition:transform .18s ease,border-color .18s ease;
+}
+.avatar-btn.sel{ border-color:#fff; transform:translateY(-3px) scale(1.04); }
+.age-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:min(360px,90%); margin:10px 0; }
+.age-chip{ border:1px solid var(--line); border-radius:16px; background:var(--card2); color:var(--ink); padding:12px 0; font-weight:900; cursor:pointer; }
+.age-chip.sel{ background:linear-gradient(135deg,var(--sol),var(--rosa)); color:#2a1748; }
+.gate-error{ color:var(--sol); min-height:18px; font-size:.78rem; font-weight:800; }
 
 /* ---- Barra "Completar y guardar" (siempre visible) ---- */
 .finish-bar{ padding:0 16px 8px; }
@@ -495,16 +508,37 @@ button{ font-family:'Nunito',sans-serif; }
     <div class="name-gate" id="nameGate">
       <div class="emoji">🦋</div>
       <div class="station-title" style="font-size:1.25rem; margin-top:4px;">¡Bienvenido a Mariposa Viva!</div>
-      <div class="station-sub" style="margin-bottom:6px;">¿Cómo te llamas?</div>
-      <input class="input-field" id="nameInput" placeholder="Escribe tu nombre" onkeydown="if(event.key==='Enter') submitName()"/>
-      <button class="primary-btn" onclick="submitName()">Comenzar ✨</button>
+      <div class="station-sub" style="margin-bottom:6px;">Primero arma tu personaje explorador.</div>
+      <div class="kid-form">
+        <input class="input-field" id="nameInput" placeholder="Primer nombre"/>
+        <input class="input-field" id="lastNameInput" placeholder="Apellido"/>
+        <div class="station-sub" style="margin:0;">Elige tu avatar</div>
+        <div class="avatar-pick" id="avatarPick">
+          <button class="avatar-btn sel" onclick="pickAvatar(this,'🦋')">🦋</button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'✨')">✨</button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'🐛')">🐛</button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'🌺')">🌺</button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'🐶')">🐶</button>
+        </div>
+        <div class="gate-error" id="nameGateError"></div>
+      </div>
+      <button class="primary-btn" onclick="submitName()">Siguiente</button>
     </div>
     <div class="name-gate" id="ageGate" style="display:none;">
       <div class="emoji">🦋</div>
       <div class="station-title" style="font-size:1.2rem; margin-top:4px;" id="ageGateGreeting">¡Hola!</div>
-      <div class="station-sub" style="margin-bottom:6px;">¿Cuántos años tienes?</div>
-      <button class="primary-btn" style="background: linear-gradient(135deg,var(--sol),var(--rosa));" onclick="chooseGroup('6-8')">🐴 Tengo entre 6 y 8 años</button>
-      <button class="primary-btn" style="background: linear-gradient(135deg,var(--violeta),var(--rio));" onclick="chooseGroup('9-12')">🦋 Tengo entre 9 y 12 años</button>
+      <div class="station-sub" style="margin-bottom:6px;">Toca tu edad para abrir tu ruta.</div>
+      <div class="age-grid" id="ageGrid">
+        <button class="age-chip" onclick="pickAge(this,6)">6</button>
+        <button class="age-chip" onclick="pickAge(this,7)">7</button>
+        <button class="age-chip" onclick="pickAge(this,8)">8</button>
+        <button class="age-chip" onclick="pickAge(this,9)">9</button>
+        <button class="age-chip" onclick="pickAge(this,10)">10</button>
+        <button class="age-chip" onclick="pickAge(this,11)">11</button>
+        <button class="age-chip" onclick="pickAge(this,12)">12</button>
+      </div>
+      <div class="gate-error" id="ageGateError"></div>
+      <button class="primary-btn" style="background: linear-gradient(135deg,var(--sol),var(--rosa));" onclick="chooseGroup()">Entrar al juego</button>
     </div>
     <div class="age-toggle" style="display:none;">
       <button class="age-btn active" id="btnG1" onclick="setGroup('6-8')">Grupo 6–8 años</button>
@@ -596,27 +630,91 @@ const MAP_68_IMG = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEB
 let group = '6-8';
 let station = 1;
 let userName = '';
+let userLastName = '';
+let userAvatar = '🦋';
+let userAge = null;
+window.userId = null;
 /* Estado global del Mural Digital Vivo: mariposas, voces/audios y huellas del recorrido */
 let muralButterflies = [];
 let muralVoices = [];
 let muralFootprints = [];
 let muralReflections = [];
 
+async function saveMuralArtifact(tipo, contenido){
+  if(!window.ApiClient || typeof ApiClient.guardarArtefactoMural !== 'function') return;
+  await ApiClient.guardarArtefactoMural({
+    ninoId: window.userId || 'anon',
+    tipo,
+    autor: `${userName || 'Anónimo'} ${userLastName || ''}`.trim(),
+    contenido
+  });
+}
+async function hydrateMuralFromApi(){
+  if(!window.ApiClient || typeof ApiClient.listarMural !== 'function') return;
+  const resp = await ApiClient.listarMural();
+  if(!resp || !resp.success || !Array.isArray(resp.data)) return;
+  muralButterflies = resp.data
+    .filter(a => a.tipo === 'mariposa' || a.tipo === 'dibujo')
+    .slice(0, 60)
+    .map(a => {
+      let c = a.contenido;
+      if(typeof c === 'string'){
+        try { c = JSON.parse(c); } catch(e) { c = {}; }
+      }
+      return c && c.src
+        ? {type:'image', src:c.src, name:a.autor, butterflyName:c.butterflyName, quality:c.quality, category:c.category, message:c.message}
+        : {type:'zones', colors:c.colors || c, name:a.autor};
+    });
+  if(station === 5) render();
+}
+
+function pickAvatar(el, avatar){
+  userAvatar = avatar;
+  document.querySelectorAll('.avatar-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function pickAge(el, age){
+  userAge = age;
+  document.querySelectorAll('.age-chip').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
 function submitName(){
   const val = document.getElementById('nameInput').value.trim();
-  userName = val || 'Explorador';
+  const last = document.getElementById('lastNameInput').value.trim();
+  const error = document.getElementById('nameGateError');
+  if(!val || !last){
+    if(error) error.innerText = 'Escribe primer nombre y apellido.';
+    return;
+  }
+  userName = val;
+  userLastName = last;
   document.getElementById('nameGate').style.display = 'none';
   const greet = document.getElementById('ageGateGreeting');
-  if(greet) greet.innerText = `¡Hola, ${userName}! 👋`;
+  if(greet) greet.innerText = `¡Hola, ${userAvatar} ${userName}!`;
   document.getElementById('ageGate').style.display = 'flex';
 }
 /* Elegida la edad, se entra recién a la app en el grupo correspondiente */
-function chooseGroup(g){
+async function chooseGroup(){
+  const error = document.getElementById('ageGateError');
+  if(!userAge){
+    if(error) error.innerText = 'Elige tu edad para continuar.';
+    return;
+  }
+  const g = userAge <= 8 ? '6-8' : '9-12';
   group = g;
   document.getElementById('btnG1').classList.toggle('active', g==='6-8');
   document.getElementById('btnG2').classList.toggle('active', g==='9-12');
   document.getElementById('ageGate').style.display = 'none';
-  document.querySelector('.top-sub').innerText = `¡Hola, ${userName}! 👋 Bienvenido/a a Mariposa Viva`;
+  document.querySelector('.top-sub').innerText = `${userAvatar} ${userName} ${userLastName} — ${userAge} años`;
+  if(window.ApiClient && typeof ApiClient.registrarPerfil === 'function'){
+    const resp = await ApiClient.registrarPerfil({
+      nombre: `${userName} ${userLastName}`,
+      avatar: userAvatar,
+      edad: userAge,
+      fechaNacimiento: ''
+    });
+    if(resp && resp.success && resp.data) window.userId = resp.data.id;
+  }
   render();
 }
 
@@ -652,7 +750,15 @@ function finishSession(){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', Number(t.dataset.st)===1));
 
   userName = '';
+  userLastName = '';
+  userAge = null;
+  userAvatar = '🦋';
+  window.userId = null;
   document.getElementById('nameInput').value = '';
+  const lastNameInput = document.getElementById('lastNameInput');
+  if(lastNameInput) lastNameInput.value = '';
+  document.querySelectorAll('.avatar-btn').forEach((b,i)=>b.classList.toggle('sel', i===0));
+  document.querySelectorAll('.age-chip').forEach(b=>b.classList.remove('sel'));
   document.querySelector('.top-sub').innerText = '';
   document.getElementById('nameGate').style.display = 'flex';
   document.getElementById('ageGate').style.display = 'none';
@@ -1059,7 +1165,9 @@ function selLand(el){
   document.querySelectorAll('.landing-spot').forEach(s=>s.classList.remove('sel'));
   el.classList.add('sel');
   // Aporte completo: se envía la mariposa EXACTA (mismos colores por zona) al Mural Digital Vivo
-  muralButterflies.push({type:'zones', colors: {...zoneColorMap}, name: userName});
+  const artifact = {type:'zones', colors: {...zoneColorMap}, name: `${userName} ${userLastName}`.trim(), avatar:userAvatar, place:el.innerText};
+  muralButterflies.push(artifact);
+  saveMuralArtifact('mariposa', artifact);
   document.getElementById('continueBlock2_68').style.display='block';
 }
 
@@ -1220,7 +1328,7 @@ function undoLastStroke(){
 }
 function finishDrawing(total){
   const canvas = document.getElementById('drawCanvas');
-  window._creaImg = canvas.toDataURL('image/png');
+  window._creaImg = canvas.toDataURL('image/jpeg', 0.74);
   creaNext(total);
 }
 function captureCreation(total){
@@ -1242,11 +1350,13 @@ function revealSymbol(){
   if(el) el.innerText = window._creaMsg ? `Este símbolo representa: "${window._creaMsg}"` : 'Aún no escribiste tu mensaje.';
 }
 function joinMural(){
-  muralButterflies.push({
-    type:'image', src: window._creaImg, name: userName,
+  const artifact = {
+    type:'image', src: window._creaImg, name: `${userName} ${userLastName}`.trim(), avatar:userAvatar,
     butterflyName: window._creaName || 'Mi mariposa', quality: window._creaQuality || '',
     category: window._creaCategory || '', message: window._creaMsg || ''
-  });
+  };
+  muralButterflies.push(artifact);
+  saveMuralArtifact('dibujo', artifact);
   window._creaStep = 5;
   render();
 }
@@ -2195,6 +2305,7 @@ function selMuralTab(t){ window._muralTab = t; render(); }
 window.API_BASE = 'https://mariposas-production.up.railway.app/api';
 const scriptClient = document.createElement('script');
 scriptClient.src = 'src/services/ApiClient.js';
+scriptClient.onload = () => hydrateMuralFromApi();
 document.body.appendChild(scriptClient);
 
 const scriptOnboarding = document.createElement('script');

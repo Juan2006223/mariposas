@@ -42,6 +42,16 @@ const ApiClient = {
     }
   },
 
+  async listarMural(tipo) {
+    try {
+      const query = tipo ? `?tipo=${encodeURIComponent(tipo)}` : '';
+      const res = await fetch(`${API_BASE}/mural${query}`);
+      return await res.json();
+    } catch (err) {
+      return { success: false, data: [], error: err.message };
+    }
+  },
+
   async registrarMetrica({ ninoId, tipoEvento, categoria, detalles, duracionSegundos }) {
     try {
       await fetch(`${API_BASE}/metricas/evento`, {
