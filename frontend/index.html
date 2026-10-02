@@ -2192,6 +2192,7 @@ function selMuralTab(t){ window._muralTab = t; render(); }
 
 
 // Inyección de componentes desacoplados
+window.API_BASE = 'https://mariposas-production.up.railway.app/api';
 const scriptClient = document.createElement('script');
 scriptClient.src = 'src/services/ApiClient.js';
 document.body.appendChild(scriptClient);
