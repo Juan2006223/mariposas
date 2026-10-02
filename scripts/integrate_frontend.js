@@ -38,7 +38,7 @@ scriptOnboarding.onload = () => {
 document.body.appendChild(scriptOnboarding);
 
 const scriptAdmin = document.createElement('script');
-scriptAdmin.src = 'src/components/AdminDashboard.js';
+scriptAdmin.src = 'src/components/AdminDashboardV2.js';
 document.body.appendChild(scriptAdmin);
 
 // Telemetría reactiva en cambio de estación

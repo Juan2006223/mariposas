@@ -1,6 +1,21 @@
 // Adaptador cliente para comunicación HTTP con el Backend REST y Postgres
 const API_BASE = window.API_BASE || `${window.location.origin}/api`;
 
+async function readApiJson(res) {
+  const text = await res.text();
+  let body = {};
+  try {
+    body = text ? JSON.parse(text) : {};
+  } catch (err) {
+    return { success: false, error: `Respuesta inválida del backend (${res.status}).` };
+  }
+  if (!res.ok && body.success !== false) {
+    body.success = false;
+    body.error = body.error || `Error del backend (${res.status}).`;
+  }
+  return body;
+}
+
 const ApiClient = {
   async registrarPerfil({ nombre, avatar, edad, fechaNacimiento }) {
     try {
@@ -9,7 +24,7 @@ const ApiClient = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, avatar, edad, fechaNacimiento })
       });
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       console.warn('API local no disponible, operando en almacenamiento local:', err.message);
       return { success: false, fallback: true };
@@ -23,7 +38,7 @@ const ApiClient = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ninoId, estacionNum, nombreEstacion, datosActividad, completado })
       });
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       return { success: false, fallback: true };
     }
@@ -36,7 +51,7 @@ const ApiClient = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ninoId, tipo, autor, contenido })
       });
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       return { success: false, fallback: true };
     }
@@ -46,7 +61,7 @@ const ApiClient = {
     try {
       const query = tipo ? `?tipo=${encodeURIComponent(tipo)}` : '';
       const res = await fetch(`${API_BASE}/mural${query}`);
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       return { success: false, data: [], error: err.message };
     }
@@ -58,7 +73,7 @@ const ApiClient = {
         method: 'DELETE',
         headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {}
       });
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -70,7 +85,7 @@ const ApiClient = {
         method: 'DELETE',
         headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {}
       });
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -90,7 +105,7 @@ const ApiClient = {
     try {
       const headers = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
       const res = await fetch(`${API_BASE}/admin/dashboard`, { headers });
-      return await res.json();
+      return await readApiJson(res);
     } catch (err) {
       return { success: false, error: err.message };
     }

@@ -51,6 +51,18 @@ class ProgresoPostgresRepository {
     return Array.from(this.memoriaProgreso.values()).filter(p => p.ninoId === ninoId);
   }
 
+  async listarTodosProgresos() {
+    if (isPostgresConnected()) {
+      try {
+        const res = await pool.query('SELECT * FROM progreso_estaciones ORDER BY actualizado_en DESC LIMIT 500');
+        return res.rows;
+      } catch (err) {
+        console.warn('Fallo en Postgres al listar progreso:', err.message);
+      }
+    }
+    return Array.from(this.memoriaProgreso.values()).reverse();
+  }
+
   async guardarArtefacto({ ninoId, tipo, autor, contenido }) {
     const id = `art_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
     const creadoEn = new Date().toISOString();

@@ -28,6 +28,9 @@ class ObtenerDashboardMetricasUseCase {
     const perfiles = await this.perfilRepository.listarTodos();
     const eventos = await this.metricasRepository.listarEventos();
     const artefactos = await this.progresoRepository.listarArtefactos();
+    const progresos = this.progresoRepository.listarTodosProgresos
+      ? await this.progresoRepository.listarTodosProgresos()
+      : [];
 
     const totalNinos = perfiles.length;
     const ninosGrupoG1 = perfiles.filter(p => p.grupo_edad === '6-8' || p.grupoEdad === '6-8').length;
@@ -57,6 +60,7 @@ class ObtenerDashboardMetricasUseCase {
       estacionesVisitadas,
       ultimosPerfiles: perfiles.slice(0, 50),
       ultimosEventos: eventos.slice(0, 200),
+      progresosRecientes: progresos,
     };
   }
 }
