@@ -52,9 +52,10 @@ const ApiClient = {
     } catch (e) {}
   },
 
-  async obtenerDashboard() {
+  async obtenerDashboard(adminToken) {
     try {
-      const res = await fetch(`${API_BASE}/admin/dashboard`);
+      const headers = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
+      const res = await fetch(`${API_BASE}/admin/dashboard`, { headers });
       return await res.json();
     } catch (err) {
       return { success: false, error: err.message };

@@ -1,5 +1,6 @@
 // Panel Dashboard de Administración para la Fundación (< 190 líneas)
 let dashboardVisible = false;
+const ADMIN_TOKEN_STORAGE_KEY = 'mariposas_admin_token';
 
 function toggleAdminDashboard() {
   dashboardVisible = !dashboardVisible;
@@ -23,6 +24,7 @@ function toggleAdminDashboard() {
 }
 
 async function cargarMetricasEnDashboard(container) {
+  const adminToken = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '';
   container.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px;">
       <div>
@@ -34,11 +36,22 @@ async function cargarMetricasEnDashboard(container) {
     <div id="dashContent" style="text-align:center; color:var(--ink-soft); padding:30px;">Cargando métricas desde PostgreSQL... ⏳</div>
   `;
 
-  const resp = await ApiClient.obtenerDashboard();
+  if (!adminToken) {
+    renderAdminLogin(container);
+    return;
+  }
+
+  const resp = await ApiClient.obtenerDashboard(adminToken);
   const content = document.getElementById('dashContent');
   if (!content) return;
 
   if (!resp || !resp.success) {
+    if (resp && resp.error === 'No autorizado.') {
+      localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+      renderAdminLogin(container, 'Clave admin incorrecta.');
+      return;
+    }
+
     content.innerHTML = `
       <div style="background:rgba(217,70,181,0.15); border:1px solid var(--rosa); padding:16px; border-radius:14px; color:var(--ink);">
         ⚠️ Backend desconectado o en inicialización. Para persistencia con PostgreSQL, asegúrate de iniciar el backend con <code>npm run start:server</code>.
@@ -114,4 +127,31 @@ async function cargarMetricasEnDashboard(container) {
       </div>
     </div>
   `;
+}
+
+function renderAdminLogin(container, errorMessage = '') {
+  const content = document.getElementById('dashContent');
+  if (!content) return;
+
+  content.innerHTML = `
+    <form id="adminLoginForm" style="max-width:420px; margin:0 auto; text-align:left; background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:18px;">
+      <label for="adminTokenInput" style="display:block; color:var(--ink); font-weight:800; margin-bottom:8px;">Clave admin</label>
+      <input id="adminTokenInput" type="password" autocomplete="current-password" placeholder="Ingresa tu clave" style="width:100%; box-sizing:border-box; background:var(--card); border:1px solid var(--line); border-radius:12px; color:var(--ink); padding:12px; font:inherit;">
+      ${errorMessage ? `<div style="color:var(--rosa); margin-top:8px; font-size:0.85rem;">${errorMessage}</div>` : ''}
+      <button type="submit" style="width:100%; margin-top:14px; background:var(--sol); color:#2a1748; border:0; border-radius:12px; padding:12px; font-weight:900; cursor:pointer;">Entrar</button>
+    </form>
+  `;
+
+  const form = document.getElementById('adminLoginForm');
+  const input = document.getElementById('adminTokenInput');
+  if (input) input.focus();
+  if (!form || !input) return;
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    const token = input.value.trim();
+    if (!token) return;
+    localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token);
+    cargarMetricasEnDashboard(container);
+  });
 }
