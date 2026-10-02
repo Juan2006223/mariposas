@@ -88,6 +88,20 @@ class ProgresoPostgresRepository {
     if (tipo) return this.memoriaArtefactos.filter(a => a.tipo === tipo);
     return this.memoriaArtefactos;
   }
+
+  async borrarArtefacto(id) {
+    if (isPostgresConnected()) {
+      try {
+        const res = await pool.query('DELETE FROM mural_artefactos WHERE id = $1 RETURNING id', [id]);
+        if (res.rowCount > 0) return true;
+      } catch (err) {
+        console.warn('Fallo en Postgres (borrar artefacto):', err.message);
+      }
+    }
+    const before = this.memoriaArtefactos.length;
+    this.memoriaArtefactos = this.memoriaArtefactos.filter(a => a.id !== id);
+    return this.memoriaArtefactos.length < before;
+  }
 }
 
 module.exports = { ProgresoPostgresRepository };

@@ -117,6 +117,16 @@ app.get('/api/mural', async (req, res) => {
   }
 });
 
+app.delete('/api/mural/:id', requireAdminToken, async (req, res) => {
+  try {
+    const deleted = await progresoRepo.borrarArtefacto(req.params.id);
+    if (!deleted) return res.status(404).json({ success: false, error: 'Artefacto no encontrado.' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: publicError(err) });
+  }
+});
+
 // --- Rutas de Telemetría y Dashboard Admin ---
 app.post('/api/metricas/evento', async (req, res) => {
   try {

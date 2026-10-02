@@ -1,4 +1,3 @@
-// Panel Dashboard de Administración para la Fundación (< 190 líneas)
 let dashboardVisible = false;
 const ADMIN_TOKEN_STORAGE_KEY = 'mariposas_admin_token';
 
@@ -14,13 +13,8 @@ function toggleAdminDashboard() {
     `;
     document.body.appendChild(panel);
   }
-
-  if (dashboardVisible) {
-    panel.style.display = 'flex';
-    cargarMetricasEnDashboard(panel);
-  } else {
-    panel.style.display = 'none';
-  }
+  panel.style.display = dashboardVisible ? 'flex' : 'none';
+  if (dashboardVisible) cargarMetricasEnDashboard(panel);
 }
 
 async function cargarMetricasEnDashboard(container) {
@@ -36,10 +30,7 @@ async function cargarMetricasEnDashboard(container) {
     <div id="dashContent" style="text-align:center; color:var(--ink-soft); padding:30px;">Cargando métricas desde PostgreSQL... ⏳</div>
   `;
 
-  if (!adminToken) {
-    renderAdminLogin(container);
-    return;
-  }
+  if (!adminToken) return renderAdminLogin(container);
 
   const [resp, muralResp] = await Promise.all([
     ApiClient.obtenerDashboard(adminToken),
@@ -50,11 +41,8 @@ async function cargarMetricasEnDashboard(container) {
 
   if (!resp || !resp.success) {
     if (resp && resp.error === 'No autorizado.') {
-      localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
-      renderAdminLogin(container, 'Clave admin incorrecta.');
-      return;
+      localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY); return renderAdminLogin(container, 'Clave admin incorrecta.');
     }
-
     content.innerHTML = `
       <div style="background:rgba(217,70,181,0.15); border:1px solid var(--rosa); padding:16px; border-radius:14px; color:var(--ink);">
         ⚠️ Backend desconectado o en inicialización. Para persistencia con PostgreSQL, asegúrate de iniciar el backend con <code>npm run start:server</code>.
@@ -64,7 +52,7 @@ async function cargarMetricasEnDashboard(container) {
   }
 
   const { resumen, estacionesVisitadas, ultimosPerfiles, ultimosEventos } = resp.data;
-  const muralItems = muralResp && muralResp.success ? muralResp.data.slice(0, 12) : [];
+  const muralItems = muralResp && muralResp.success ? muralResp.data : [];
   const dbStatus = resp.postgresConectado ? '🟢 PostgreSQL Activo' : '🟡 Modo Fallback Memoria';
 
   content.innerHTML = `
@@ -72,7 +60,6 @@ async function cargarMetricasEnDashboard(container) {
       <span style="font-size:0.82rem; background:var(--card2); border:1px solid var(--line); padding:6px 12px; border-radius:20px; color:var(--ink);">${dbStatus}</span>
     </div>
 
-    <!-- Tarjetas de métricas -->
     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:20px; text-align:left;">
       <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:14px;">
         <div style="font-size:0.8rem; color:var(--ink-soft);">Total Niños Registrados</div>
@@ -91,7 +78,6 @@ async function cargarMetricasEnDashboard(container) {
       </div>
     </div>
 
-    <!-- Avance por Estaciones -->
     <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:20px; text-align:left;">
       <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 12px;">📍 Frecuencia y Uso por Estación</h3>
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
@@ -104,40 +90,58 @@ async function cargarMetricasEnDashboard(container) {
       </div>
     </div>
 
-    <!-- Tabla de Participantes Recientes -->
       <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:16px; text-align:left;">
-      <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 10px;">🧒 Últimos Participantes</h3>
-      <div style="overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse; font-size:0.82rem; color:var(--ink-soft);">
-          <thead>
-            <tr style="border-bottom:1px solid var(--line); text-align:left; color:var(--ink);">
-              <th style="padding:8px;">Nombre</th>
-              <th style="padding:8px;">Avatar</th>
-              <th style="padding:8px;">Edad</th>
-              <th style="padding:8px;">Grupo</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${ultimosPerfiles.length === 0 ? '<tr><td colspan="4" style="padding:10px; text-align:center;">No hay registros aún</td></tr>' : ultimosPerfiles.map(p => `
-              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                <td style="padding:8px; font-weight:700; color:var(--violeta-suave);">${p.nombre}</td>
-                <td style="padding:8px;">${p.avatar}</td>
-                <td style="padding:8px;">${p.edad} años</td>
-                <td style="padding:8px;">${p.grupo_edad || p.grupoEdad}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
+      <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 10px;">🧒 Participantes — toca uno para ver actividades</h3>
+      ${renderParticipantCards(ultimosPerfiles, ultimosEventos, muralItems)}
     </div>
 
     <div style="background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:20px; text-align:left;">
-      <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 10px;">🎨 Creaciones guardadas</h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px;">
-        ${muralItems.length === 0 ? '<div style="color:var(--ink-soft);">Aún no hay creaciones guardadas.</div>' : muralItems.map(item => renderMuralAdminCard(item)).join('')}
-      </div>
+      <h3 style="font-family:'Baloo 2', sans-serif; font-size:1.1rem; color:var(--ink); margin:0 0 10px;">🎨 Creaciones por niño/a</h3>
+      ${renderMuralByChild(muralItems)}
     </div>
   `;
+}
+
+function renderParticipantCards(profiles, events, muralItems) {
+  if (!profiles.length) return '<div style="color:var(--ink-soft);">No hay registros aún.</div>';
+  return profiles.map((p, i) => {
+    const name = p.nombre || 'Sin nombre';
+    const pid = p.id || p.nino_id;
+    const evs = events.filter(e => sameChild(e.nino_id || e.ninoId, pid) || ((e.detalles || {}).nombre || '').includes(name.split(' ')[0])).slice(0, 6);
+    const arts = muralItems.filter(a => sameChild(a.nino_id || a.ninoId, pid) || (a.autor || '').toLowerCase() === name.toLowerCase());
+    return `<section style="border:1px solid var(--line);background:var(--card);border-radius:14px;margin-bottom:10px;overflow:hidden;">
+      <button onclick="toggleParticipantDetail(${i})" style="width:100%;border:0;background:transparent;color:var(--ink);cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;text-align:left;">
+        <span style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--violeta),var(--rosa));display:grid;place-items:center;font-size:1.35rem;">${p.avatar || '🦋'}</span>
+        <span><strong style="display:block;color:var(--violeta-suave);font-size:1rem;">${name}</strong><small style="color:var(--ink-soft);">${p.edad} años · ${p.grupo_edad || p.grupoEdad || ''} · ${arts.length} creación(es)</small></span>
+        <span style="background:rgba(255,200,87,.16);border:1px solid rgba(255,200,87,.4);color:var(--sol);border-radius:999px;padding:9px 12px;font-weight:900;">Ver actividades</span>
+      </button>
+      <div id="childDetail${i}" style="display:none;border-top:1px solid var(--line);padding:12px 16px;">
+        ${renderChildActivity(evs, arts)}
+      </div>
+    </section>`;
+  }).join('');
+}
+
+function sameChild(a, b) { return a && b && String(a) === String(b); }
+function toggleParticipantDetail(i) {
+  const el = document.getElementById(`childDetail${i}`); if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function renderChildActivity(events, arts) {
+  const eventHtml = events.length ? events.map(e => `<li style="margin:6px 0;color:var(--ink-soft);"><b style="color:var(--ink);">${e.tipo_evento || e.tipoEvento || 'Evento'}</b> · ${((e.detalles || {}).estacion) ? 'Estación ' + (e.detalles || {}).estacion : (e.categoria || '')}</li>`).join('') : '<li style="color:var(--ink-soft);">Sin eventos recientes.</li>';
+  const artHtml = arts.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,210px));gap:10px;margin-top:10px;">${arts.map(renderMuralAdminCard).join('')}</div>` : '<div style="color:var(--ink-soft);margin-top:8px;">Sin creaciones todavía.</div>';
+  return `<div style="display:grid;grid-template-columns:minmax(180px,.8fr) 1.2fr;gap:12px;"><div><b style="color:var(--sol);">Actividades</b><ul style="padding-left:18px;margin:8px 0 0;">${eventHtml}</ul></div><div><b style="color:var(--sol);">Creaciones CRUD</b>${artHtml}</div></div>`;
+}
+
+function renderMuralByChild(items) {
+  if (!items.length) return '<div style="color:var(--ink-soft);">Aún no hay creaciones guardadas.</div>';
+  const groups = items.reduce((acc, item) => {
+    const key = item.autor || 'Anónimo/a';
+    acc[key] = acc[key] || [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+  return Object.entries(groups).map(([name, list]) => `<section style="margin-bottom:14px;"><div style="display:flex; justify-content:space-between; align-items:center; gap:8px; color:var(--ink); font-weight:900; margin-bottom:8px;"><span>${name}</span><span style="color:var(--ink-soft); font-size:.78rem;">${list.length} creación(es)</span></div><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,210px)); gap:10px;">${list.map(renderMuralAdminCard).join('')}</div></section>`).join('');
 }
 
 function renderMuralAdminCard(item) {
@@ -145,39 +149,45 @@ function renderMuralAdminCard(item) {
   if (typeof content === 'string') {
     try { content = JSON.parse(content); } catch (e) { content = {}; }
   }
-  const img = content.src ? `<img src="${content.src}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px;">` : `<div style="width:100%; aspect-ratio:1; display:grid; place-items:center; border-radius:10px; background:var(--card); font-size:2rem;">${content.avatar || '🦋'}</div>`;
-  return `
-    <div style="background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px;">
-      ${img}
-      <div style="color:var(--ink); font-weight:800; margin-top:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.autor || 'Anónimo/a'}</div>
-      <div style="color:var(--ink-soft); font-size:0.75rem;">${item.tipo || 'mural'}</div>
-    </div>
-  `;
+  const icon = String(content.avatar || '🦋').replace(/'/g, '&#39;');
+  const img = content.src && content.src.length > 80
+    ? `<img src="${content.src}" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px;" onerror="this.replaceWith(fallbackMuralThumb('${icon}'))">`
+    : `<div style="width:100%; aspect-ratio:1; display:grid; place-items:center; border-radius:10px; background:var(--card); font-size:2rem;">${icon}</div>`;
+  return `<div style="background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px;">${img}<div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:8px;"><div style="min-width:0;"><div style="color:var(--ink); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${content.butterflyName || item.tipo || 'mural'}</div><div style="color:var(--ink-soft); font-size:0.75rem;">${item.tipo || 'mural'}</div></div><button onclick="deleteMuralItem('${item.id}')" title="Borrar" style="border:1px solid var(--line); background:rgba(217,70,181,.18); color:var(--ink); border-radius:10px; padding:7px 9px; cursor:pointer;">Borrar</button></div></div>`;
+}
+
+function fallbackMuralThumb(icon) {
+  const div = document.createElement('div'); div.style.cssText = 'width:100%;aspect-ratio:1;display:grid;place-items:center;border-radius:10px;background:var(--card);font-size:2rem;'; div.textContent = icon || '🦋'; return div;
+}
+
+async function deleteMuralItem(id) {
+  const token = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '';
+  if (!confirm('¿Borrar esta creación del mural?')) return;
+  const resp = await ApiClient.borrarArtefactoMural(id, token);
+  if (!resp || !resp.success) return alert('No se pudo borrar.');
+  const panel = document.getElementById('adminDashboardOverlay');
+  if (panel) cargarMetricasEnDashboard(panel);
 }
 
 function renderAdminLogin(container, errorMessage = '') {
   const content = document.getElementById('dashContent');
   if (!content) return;
-
-  content.innerHTML = `
-    <form id="adminLoginForm" style="max-width:420px; margin:0 auto; text-align:left; background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:18px;">
-      <label for="adminTokenInput" style="display:block; color:var(--ink); font-weight:800; margin-bottom:8px;">Clave admin</label>
-      <input id="adminTokenInput" type="password" autocomplete="current-password" placeholder="Ingresa tu clave" style="width:100%; box-sizing:border-box; background:var(--card); border:1px solid var(--line); border-radius:12px; color:var(--ink); padding:12px; font:inherit;">
-      ${errorMessage ? `<div style="color:var(--rosa); margin-top:8px; font-size:0.85rem;">${errorMessage}</div>` : ''}
-      <button type="submit" style="width:100%; margin-top:14px; background:var(--sol); color:#2a1748; border:0; border-radius:12px; padding:12px; font-weight:900; cursor:pointer;">Entrar</button>
-    </form>
-  `;
-
+  content.innerHTML = `<form id="adminLoginForm" style="max-width:420px; margin:0 auto; text-align:left; background:var(--card2); border:1px solid var(--line); border-radius:16px; padding:18px;">
+    <label for="adminTokenInput" style="display:block; color:var(--ink); font-weight:800; margin-bottom:8px;">Clave admin</label>
+    <input id="adminTokenInput" type="password" autocomplete="current-password" placeholder="Ingresa tu clave" style="width:100%; box-sizing:border-box; background:var(--card); border:1px solid var(--line); border-radius:12px; color:var(--ink); padding:12px; font:inherit;">
+    ${errorMessage ? `<div style="color:var(--rosa); margin-top:8px; font-size:0.85rem;">${errorMessage}</div>` : ''}
+    <button type="submit" style="width:100%; margin-top:14px; background:var(--sol); color:#2a1748; border:0; border-radius:12px; padding:12px; font-weight:900; cursor:pointer;">Entrar</button>
+  </form>`;
   const form = document.getElementById('adminLoginForm');
   const input = document.getElementById('adminTokenInput');
   if (input) input.focus();
   if (!form || !input) return;
-
   form.addEventListener('submit', event => {
     event.preventDefault();
     const token = input.value.trim();
-    if (!token) return;
-    localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token);
-    cargarMetricasEnDashboard(container);
+    if (token) {
+      localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token);
+      cargarMetricasEnDashboard(container);
+    }
   });
 }

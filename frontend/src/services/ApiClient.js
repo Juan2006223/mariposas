@@ -52,6 +52,18 @@ const ApiClient = {
     }
   },
 
+  async borrarArtefactoMural(id, adminToken) {
+    try {
+      const res = await fetch(`${API_BASE}/mural/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {}
+      });
+      return await res.json();
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
   async registrarMetrica({ ninoId, tipoEvento, categoria, detalles, duracionSegundos }) {
     try {
       await fetch(`${API_BASE}/metricas/evento`, {

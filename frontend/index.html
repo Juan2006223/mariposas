@@ -65,7 +65,7 @@ body{
   background: linear-gradient(135deg, var(--violeta), var(--rosa));
   color:#fff; box-shadow:0 4px 14px rgba(155,77,255,0.5);
 }
-.screen{ flex:1; padding:6px 18px 18px; overflow-y:auto; animation: fadeIn .35s ease; }
+.screen{ flex:1; padding:6px 18px 112px; overflow-y:auto; animation: fadeIn .35s ease; }
 @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
 .station-title{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:1.15rem; color:var(--violeta-suave); margin:6px 0 2px; }
 .station-sub{ font-size:0.82rem; color:var(--ink-soft); margin-bottom:14px; line-height:1.4; }
@@ -164,22 +164,55 @@ body{
 .landing-spot.sel{ background:var(--sol); color:#2A0845; border-color:var(--sol); font-weight:700; }
 
 /* ---- Crea 9-12: dibujo libre ---- */
-.canvas-wrap{ background:#F7F2FF; border-radius:18px; padding:8px; box-shadow: var(--shadow); }
-#drawCanvas{ display:block; border-radius:12px; touch-action:none; width:100%; height:200px; background:#FBF7FF; }
-.draw-tools{ display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
-.brush-color{
-  width:26px; height:26px; border-radius:50%; cursor:pointer; border:2px solid transparent;
+.draw-studio{
+  background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:20px; padding:12px;
+  box-shadow:var(--shadow); margin-top:10px;
 }
-.brush-color.sel{ border-color:#fff; box-shadow:0 0 0 2px var(--violeta); }
+.draw-studio-head{ display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+.draw-studio-title{ font-family:'Baloo 2',sans-serif; font-weight:900; color:var(--ink); font-size:1rem; }
+.draw-status{
+  color:var(--sol); background:rgba(255,199,75,.13); border:1px solid rgba(255,199,75,.3);
+  border-radius:999px; padding:6px 10px; font-size:.72rem; font-weight:900;
+}
+.canvas-wrap{
+  position:relative; background:#F7F2FF; border-radius:22px; padding:12px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5), var(--shadow);
+}
+.canvas-wrap::before{
+  content:'Lienzo'; position:absolute; top:10px; left:14px; color:#6B5B7D; font-size:.66rem; font-weight:900;
+}
+#drawCanvas{ display:block; border-radius:16px; touch-action:none; width:100%; height:250px; background:#FBF7FF; }
+.draw-tools{ display:flex; align-items:center; gap:9px; margin-top:12px; flex-wrap:wrap; justify-content:center; }
+.tool-group{
+  display:flex; gap:7px; flex-wrap:wrap; align-items:center; justify-content:center; padding:8px;
+  background:rgba(0,0,0,.12); border:1px solid rgba(255,255,255,.08); border-radius:16px;
+}
+.tool-group-label{ width:100%; color:var(--ink-soft); font-size:.68rem; font-weight:900; text-align:center; }
+.brush-color{
+  width:38px; height:38px; border-radius:50%; cursor:pointer; border:3px solid transparent;
+  box-shadow:0 5px 12px rgba(0,0,0,.18);
+}
+.brush-color.sel{ border-color:#fff; box-shadow:0 0 0 3px var(--violeta), 0 5px 12px rgba(0,0,0,.22); transform:translateY(-2px); }
 .tool-btn{
-  border:none; border-radius:10px; padding:8px 12px; font-size:0.78rem; cursor:pointer;
-  background:var(--card2); color:var(--ink-soft); font-family:'Nunito',sans-serif;
+  border:none; border-radius:14px; padding:11px 16px; min-height:44px; font-size:0.88rem; cursor:pointer;
+  background:var(--card2); color:var(--ink); font-family:'Nunito',sans-serif; font-weight:800;
 }
 .tool-btn.active{ background: linear-gradient(135deg,var(--violeta),var(--rosa)); color:#fff; }
+.tool-btn.big{ min-height:48px; padding:12px 18px; }
+.size-chip{ min-width:48px; }
 .primary-btn{
   width:100%; border:none; border-radius:14px; padding:11px; margin-top:14px; cursor:pointer;
   font-family:'Baloo 2',sans-serif; font-weight:700; font-size:0.9rem; color:#fff;
   background: linear-gradient(135deg, var(--violeta), var(--rosa)); box-shadow:0 4px 14px rgba(155,77,255,0.4);
+}
+.action-nudge{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 12px; border-radius:999px;
+  background:rgba(155,77,255,.24); border:1px solid rgba(255,255,255,.18); color:var(--violeta-suave);
+  font-family:'Baloo 2',sans-serif; font-weight:900; font-size:.82rem; animation:tapPulse 1.4s ease-in-out infinite;
+}
+.step-card{
+  background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:16px; padding:10px 12px;
+  color:var(--ink); font-size:.84rem; text-align:center; margin:8px 0;
 }
 .crea-preview{ text-align:center; }
 .crea-preview img{ max-width:170px; border-radius:14px; box-shadow: var(--shadow); }
@@ -322,6 +355,14 @@ body{
 .video-modal-media{ border-radius:12px; overflow:hidden; background:#0E0620; min-height:150px; display:flex; align-items:center; justify-content:center; }
 .video-placeholder{ color:#EADFF5; text-align:center; font-size:0.82rem; line-height:1.6; padding:20px; }
 .video-modal-text{ font-size:0.8rem; color:var(--ink-soft); line-height:1.5; }
+.tap-hint{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px;
+  background:rgba(255,200,87,.18); border:1px solid rgba(255,200,87,.45);
+  color:var(--sol); font-weight:900; font-size:.78rem; animation:tapPulse 1.5s ease-in-out infinite;
+}
+@keyframes tapPulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+.clickable-glow{ animation:softBounce 1.8s ease-in-out infinite; }
+@keyframes softBounce{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 .map-dark{ background: linear-gradient(160deg, var(--violeta-oscuro), #0E0620); border-radius:18px; padding:18px; color:#fff; min-height:300px; position:relative; }
 .passport-row{ display:flex; justify-content:center; gap:10px; margin-bottom:18px; }
 .stamp-slot{
@@ -377,8 +418,9 @@ body{
 .mural-card{ display:flex; flex-direction:column; align-items:center; gap:4px; }
 .mural-name{
   font-size:0.64rem; color:var(--ink-soft); max-width:100%; text-align:center;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:'Baloo 2',sans-serif;
+  overflow:hidden; text-overflow:ellipsis; white-space:normal; font-family:'Baloo 2',sans-serif; line-height:1.05;
 }
+.mural-name span{ opacity:.72; font-weight:700; }
 .mural-butterfly{
   aspect-ratio:1; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;
   background:var(--card2); border:1px solid var(--line); overflow:hidden;
@@ -431,17 +473,18 @@ button{ font-family:'Nunito',sans-serif; }
 
 /* ---- Barra "Completar y guardar" (siempre visible) ---- */
 .finish-bar{
-  position:sticky; top:0; z-index:30; padding:8px 16px;
-  background:linear-gradient(180deg,rgba(42,14,71,.98),rgba(42,14,71,.78));
+  position:absolute; left:0; right:0; bottom:62px; z-index:45; padding:8px 16px;
+  background:linear-gradient(0deg,rgba(42,14,71,.98),rgba(42,14,71,.58));
   backdrop-filter: blur(8px);
 }
 .finish-btn{
   width:100%; border:none; border-radius:16px; padding:12px; cursor:pointer;
   font-family:'Baloo 2',sans-serif; font-weight:900; font-size:0.82rem; color:var(--sol);
   background:rgba(255,200,87,0.18); border:1px solid rgba(255,200,87,0.48);
-  box-shadow:0 8px 20px rgba(0,0,0,.18);
+  box-shadow:0 8px 20px rgba(0,0,0,.18); animation:savePulse 2.4s ease-in-out infinite;
 }
 .finish-btn:hover{ background:rgba(255,200,87,0.2); }
+@keyframes savePulse{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
 
 /* ---- Lightbox: ver mariposa en pantalla completa ---- */
 .lightbox{
@@ -494,7 +537,7 @@ button{ font-family:'Nunito',sans-serif; }
   .tabbar{ padding:12px 30px; }
   .tab{ font-size:0.74rem; }
   .tab .icon{ font-size:1.35rem; }
-  .finish-bar{ padding:0 40px 10px; }
+  .finish-bar{ padding:8px 40px; }
   .lightbox-media{ width:min(50vw,420px); }
 }
 </style>
@@ -711,16 +754,20 @@ async function chooseGroup(){
   document.getElementById('btnG2').classList.toggle('active', g==='9-12');
   document.getElementById('ageGate').style.display = 'none';
   document.querySelector('.top-sub').innerText = `${userAvatar} ${userName} ${userLastName} — ${userAge} años`;
-  if(window.ApiClient && typeof ApiClient.registrarPerfil === 'function'){
-    const resp = await ApiClient.registrarPerfil({
-      nombre: `${userName} ${userLastName}`,
-      avatar: userAvatar,
-      edad: userAge,
-      fechaNacimiento: ''
-    });
-    if(resp && resp.success && resp.data) window.userId = resp.data.id;
-  }
   render();
+  if(window.ApiClient && typeof ApiClient.registrarPerfil === 'function'){
+    try {
+      const resp = await ApiClient.registrarPerfil({
+        nombre: `${userName} ${userLastName}`,
+        avatar: userAvatar,
+        edad: userAge,
+        fechaNacimiento: ''
+      });
+      if(resp && resp.success && resp.data) window.userId = resp.data.id;
+    } catch(e) {
+      console.warn('Registro local de niño activo');
+    }
+  }
 }
 
 /* Cierra el turno del niño/a actual: lo ya creado queda guardado en el Mural,
@@ -759,14 +806,18 @@ function finishSession(){
   userAge = null;
   userAvatar = '🦋';
   window.userId = null;
-  document.getElementById('nameInput').value = '';
+  const nameInput = document.getElementById('nameInput');
+  if(nameInput) nameInput.value = '';
   const lastNameInput = document.getElementById('lastNameInput');
   if(lastNameInput) lastNameInput.value = '';
   document.querySelectorAll('.avatar-btn').forEach((b,i)=>b.classList.toggle('sel', i===0));
   document.querySelectorAll('.age-chip').forEach(b=>b.classList.remove('sel'));
   document.querySelector('.top-sub').innerText = '';
+  if(typeof nombreTemporal !== 'undefined') nombreTemporal = '';
+  if(typeof apellidoTemporal !== 'undefined') apellidoTemporal = '';
   document.getElementById('nameGate').style.display = 'flex';
   document.getElementById('ageGate').style.display = 'none';
+  if(typeof renderOnboardingModal === 'function') renderOnboardingModal();
   closeLightbox();
   render();
 }
@@ -808,9 +859,10 @@ function render(){
 function station1_68(){
   return `
     <div class="station-title">El Baúl de los Secretos de Canelo</div>
-    <div class="station-sub">Toca el baúl y descubre los objetos que guardan la memoria del territorio. 🔊 Cada objeto te contará su historia en voz alta.</div>
+    <div class="station-sub">Toca el baúl y descubre objetos con historias del territorio.</div>
+    <div style="text-align:center; margin:8px 0;"><span class="tap-hint">Dame clic para abrir</span></div>
     <div class="baul-zone">
-      <svg class="baul" id="baulSvg" width="200" height="150" viewBox="0 0 120 90" onclick="openBaul()">
+      <svg class="baul clickable-glow" id="baulSvg" width="200" height="150" viewBox="0 0 120 90" onclick="openBaul()">
         <rect x="6" y="30" width="108" height="54" rx="10" fill="#B0793F"/>
         <rect x="6" y="30" width="108" height="14" rx="7" fill="#C99657"/>
         <rect x="52" y="40" width="16" height="10" rx="3" fill="#FFC857"/>
@@ -1084,6 +1136,7 @@ function station2_68(){
   return `
     <div class="station-title">La mariposa que cambia de humor</div>
     <div class="station-sub">Elige un color y toca cada parte del ala para pintarla. ¡Tiene 12 partes para combinar muchos colores!</div>
+    <div style="text-align:center; margin-bottom:8px;"><span class="action-nudge">1. Color  ➜  2. Toca un ala</span></div>
     <div class="paint-zone">
       <svg width="340" height="272" viewBox="0 0 200 160" id="butterflySvg" class="idle-shiver">
         <path id="wingLU" class="zone" d="M100,78 C80,30 30,18 15,45 C3,68 20,92 55,90 C75,89 92,85 100,78 Z" fill="#3A2E52" onclick="paintZone('wingLU')"/>
@@ -1112,6 +1165,7 @@ function station2_68(){
           ['#F5EEFF','blanco'],['#FF3B7A','fucsia'],['#7CE7E1','celeste'],['#C9F24B','lima']
         ].map(([hex])=>`<button class="color-blob" style="background:${hex}" onclick="pickColor(this,'${hex}')"></button>`).join('')}
       </div>
+      <div class="step-card">Dame clic en una parte oscura de la mariposa. Cada toque pinta una zona.</div>
       <div class="station-sub" id="soundHint" style="min-height:16px; margin-bottom:0;"></div>
       <div class="progress-mini" id="zoneProg">0 de 12 partes pintadas</div>
       <div id="landingBlock" style="display:none; width:100%;">
@@ -1188,21 +1242,47 @@ function station2_912(){
         <h4 style="font-family:'Baloo 2',sans-serif; color:var(--violeta-suave); margin:0 0 8px;">💡 Mi misión: crear con sentido</h4>
         <p style="font-size:0.84rem; color:var(--ink-soft); margin:0 0 8px;">Diseña una mariposa que represente algo importante para ti sobre La Mariposa: 🦋 un color de esperanza, 🏘️ una forma del territorio, 📍 un símbolo de un lugar, ❤️ una emoción, 🌱 algo que quieras que recuerden.</p>
         <p style="font-size:0.8rem; font-style:italic; color:var(--sol); margin:0 0 12px;">"Tu mariposa no tiene que ser perfecta. Lo importante es lo que quieres contar con ella."</p>
+        <div class="step-card">Paso 1: cuando des clic, aparece tu lienzo para dibujar.</div>
         <button class="primary-btn" onclick="creaNext(${total})">Comenzar a dibujar</button>
       </div>`;
   } else if(window._creaStep===1){
     body = `
-      <div class="canvas-wrap">
-        <canvas id="drawCanvas" width="300" height="200"></canvas>
+      <div class="step-card"><span class="action-nudge">👆 Toca el lienzo y arrastra tu dedo para pintar</span></div>
+      <div class="draw-studio">
+        <div class="draw-studio-head">
+          <div class="draw-studio-title">🎨 Mi mesa de dibujo</div>
+          <div class="draw-status" id="brushStatus">Pincel redondo · tamaño 7</div>
+        </div>
+        <div class="canvas-wrap clickable-glow">
+          <canvas id="drawCanvas" width="340" height="240"></canvas>
+        </div>
+        <div class="draw-tools">
+          <div class="tool-group">
+            <div class="tool-group-label">Colores</div>
+            ${['#9B4DFF','#D946B5','#5B6FE8','#FFC857','#4FB286','#1B0F30','#2EC4B6','#FF6B6B','#E84393','#74C0FC','#A8E063','#F4A261','#264653','#6B8E23','#F7B6D2','#8D99AE'].map(c=>`<button class="brush-color ${brushColor===c?'sel':''}" aria-label="Color ${c}" style="background:${c}" onclick="setBrush('${c}',this)"></button>`).join('')}
+          </div>
+          <div class="tool-group">
+            <div class="tool-group-label">Pincel</div>
+            <button class="tool-btn ${brushMode==='round' && !erasing?'active':''}" data-mode="round" onclick="setBrushMode('round',this)">● Redondo</button>
+            <button class="tool-btn ${brushMode==='soft' && !erasing?'active':''}" data-mode="soft" onclick="setBrushMode('soft',this)">✨ Suave</button>
+            <button class="tool-btn ${brushMode==='marker' && !erasing?'active':''}" data-mode="marker" onclick="setBrushMode('marker',this)">▰ Marcador</button>
+          </div>
+          <div class="tool-group">
+            <div class="tool-group-label">Tamaño</div>
+            <button class="tool-btn size-chip ${brushSize===4?'active':''}" onclick="setBrushSize(4,this)">Fino</button>
+            <button class="tool-btn size-chip ${brushSize===7?'active':''}" onclick="setBrushSize(7,this)">Medio</button>
+            <button class="tool-btn size-chip ${brushSize===13?'active':''}" onclick="setBrushSize(13,this)">Grande</button>
+          </div>
+          <div class="tool-group">
+            <div class="tool-group-label">Ayuda</div>
+            <button class="tool-btn big" id="eraserBtn" onclick="setEraser()">🩹 Borrador</button>
+            <button class="tool-btn big" onclick="undoLastStroke()">↩️ Deshacer</button>
+            <button class="tool-btn big" onclick="clearCanvas()">🧹 Limpiar</button>
+          </div>
+        </div>
       </div>
-      <div class="draw-tools">
-        ${['#9B4DFF','#D946B5','#5B6FE8','#FFC857','#4FB286','#1B0F30','#2EC4B6','#FF6B6B','#E84393','#74C0FC','#A8E063','#F4A261','#264653','#6B8E23','#F7B6D2','#8D99AE'].map(c=>`<div class="brush-color" style="background:${c}" onclick="setBrush('${c}',this)"></div>`).join('')}
-        <button class="tool-btn" id="eraserBtn" onclick="setEraser()">🩹 Borrador</button>
-        <button class="tool-btn" onclick="undoLastStroke()">↩️ Deshacer</button>
-        <button class="tool-btn" onclick="clearCanvas()">🧹 Borrar todo</button>
-      </div>
-      <div class="hint">🎨✏️🌸🏘️🦋 Dibuja tu mariposa libremente y píntala como quieras. Usa el 🩹 Borrador si te equivocas en una parte: solo borra ahí, no todo el dibujo.</div>
-      <button class="primary-btn" onclick="finishDrawing(${total})">Listo, continuar</button>
+      <div class="hint">💡 Dibuja alas, montañas, una casa, una flor o un símbolo de tu historia. El botón de abajo toma la foto de tu creación.</div>
+      <button class="primary-btn" onclick="finishDrawing(${total})">✅ Terminé mi dibujo</button>
     `;
   } else if(window._creaStep===2){
     body = `
@@ -1210,7 +1290,8 @@ function station2_912(){
         <div class="station-sub">📸 Capturo mi creación</div>
         <img id="previewImg" src="${window._creaImg||''}" alt="mariposa dibujada"/>
       </div>
-      <button class="primary-btn" onclick="creaNext(${total})">Continuar</button>
+      <div class="step-card">Así se guardará para verla luego en el mural y en admin. Si quieres cambiar algo, vuelve con el botón del navegador y dibuja de nuevo.</div>
+      <button class="primary-btn" onclick="creaNext(${total})">✅ Sí, guardar datos de mi creación</button>
     `;
   } else if(window._creaStep===3){
     body = `
@@ -1226,6 +1307,7 @@ function station2_912(){
       </div>
       <div class="station-sub" style="margin-top:12px;">💬 Mi mensaje</div>
       <textarea class="input-field" id="butMsg" rows="3" placeholder="¿Qué quieres contarle a otras personas con tu mariposa?"></textarea>
+      <div class="step-card">Cuando presiones guardar, la foto del dibujo queda respaldada para este niño/a.</div>
       <button class="primary-btn" onclick="captureCreation(${total})">📸 Guardar mi creación</button>
     `;
   } else if(window._creaStep===4){
@@ -1240,14 +1322,16 @@ function station2_912(){
         <div class="station-sub" id="symbolReveal" style="min-height:16px;"></div>
         <div class="station-sub" style="font-style:italic; margin-top:6px;">"Esta creación nació de tu imaginación y ahora forma parte de una experiencia colectiva."</div>
       </div>
-      <button class="primary-btn" onclick="joinMural()">Unir al Mural 🦋</button>
+      <div class="step-card">Último paso: toca este botón para que aparezca en la galería, en el mural y en el panel admin.</div>
+      <button class="primary-btn" onclick="joinMural()">🖼️ Guardar y poner en el Mural</button>
     `;
   } else if(window._creaStep===5){
     body = `
       <div class="crea-card" style="background:var(--card2); border:1px solid var(--line); border-radius:18px; padding:16px; text-align:center;">
         <h4 style="font-family:'Baloo 2',sans-serif; color:var(--violeta-suave); margin:0 0 8px;">🌎 ¡Tu mariposa se unió a las demás!</h4>
-        <p style="font-size:0.84rem; color:var(--ink-soft); margin:0 0 12px;">Tu creación ya forma parte del Mural Digital Vivo.</p>
-        <button class="primary-btn" onclick="creaGoNext()">Completar y continuar ➜</button>
+        <p style="font-size:0.84rem; color:var(--ink-soft); margin:0 0 12px;">Tu creación ya forma parte del Mural Digital Vivo y quedó respaldada en la plataforma.</p>
+        <button class="primary-btn" onclick="goToMuralFromCreation()">👀 Ver mi creación en el mural</button>
+        <button class="tool-btn big" style="width:100%; margin-top:10px;" onclick="creaGoNext()">Seguir con la siguiente estación ➜</button>
       </div>`;
   }
   return `
@@ -1261,19 +1345,33 @@ function creaNext(total){
   window._creaStep = Math.min((window._creaStep??0)+1, total-1);
   render();
 }
-let ctx, drawing=false, brushColor='#9B4DFF', erasing=false;
+let ctx, drawing=false, brushColor='#9B4DFF', brushSize=7, brushMode='round', erasing=false;
 let strokeHistory = [];
+function applyBrushStyle(){
+  if(!ctx) return;
+  ctx.globalAlpha = erasing ? 1 : (brushMode==='soft' ? .72 : 1);
+  ctx.shadowBlur = erasing ? 0 : (brushMode==='soft' ? brushSize * 1.3 : 0);
+  ctx.shadowColor = brushColor;
+  ctx.lineWidth = erasing ? Math.max(18, brushSize * 2.6) : brushSize;
+  ctx.lineCap = brushMode==='marker' ? 'square' : 'round';
+  ctx.lineJoin = brushMode==='marker' ? 'miter' : 'round';
+  ctx.strokeStyle = erasing ? '#FBF7FF' : brushColor;
+}
+function updateBrushStatus(){
+  const status = document.getElementById('brushStatus');
+  if(!status) return;
+  const label = erasing ? 'Borrador' : (brushMode==='soft' ? 'Pincel suave' : brushMode==='marker' ? 'Marcador' : 'Pincel redondo');
+  status.innerText = `${label} · tamaño ${brushSize}`;
+}
 function initCanvas(){
   const canvas = document.getElementById('drawCanvas');
   if(!canvas) return;
   ctx = canvas.getContext('2d');
   ctx.fillStyle = '#FBF7FF';
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.lineWidth = 6;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.strokeStyle = brushColor;
   erasing = false;
+  applyBrushStyle();
+  updateBrushStatus();
   strokeHistory = [];
   /* Convierte la posición del puntero (en píxeles CSS) a coordenadas reales del canvas,
      para que el trazo salga exactamente donde se toca, sin correrse hacia la derecha */
@@ -1288,14 +1386,14 @@ function initCanvas(){
     /* Guarda cómo estaba el dibujo justo antes de este trazo, para poder deshacerlo */
     strokeHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
     if(strokeHistory.length>25) strokeHistory.shift();
+    applyBrushStyle();
     const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);
   };
   canvas.onpointermove = e=>{
     if(!drawing) return;
     const p = getPos(e);
     ctx.lineTo(p.x,p.y);
-    ctx.lineWidth = erasing ? 22 : 6;
-    ctx.strokeStyle = erasing ? '#FBF7FF' : brushColor;
+    applyBrushStyle();
     ctx.stroke();
   };
   window.addEventListener('pointerup', ()=>drawing=false);
@@ -1307,6 +1405,25 @@ function setBrush(c, el){
   if(eraserBtn) eraserBtn.classList.remove('active');
   document.querySelectorAll('.brush-color').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
+  applyBrushStyle();
+  updateBrushStatus();
+}
+function setBrushMode(mode, el){
+  brushMode = mode;
+  erasing = false;
+  document.querySelectorAll('[data-mode]').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const eraserBtn = document.getElementById('eraserBtn');
+  if(eraserBtn) eraserBtn.classList.remove('active');
+  applyBrushStyle();
+  updateBrushStatus();
+}
+function setBrushSize(size, el){
+  brushSize = size;
+  document.querySelectorAll('.size-chip').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  applyBrushStyle();
+  updateBrushStatus();
 }
 /* Modo "borrador": NO limpia todo el dibujo. Pinta con el color de fondo solo por donde
    el niño/a pasa el dedo, como una goma que corrige un pequeño error sin perder el resto. */
@@ -1315,15 +1432,21 @@ function setEraser(){
   document.querySelectorAll('.brush-color').forEach(b=>b.classList.remove('sel'));
   const eraserBtn = document.getElementById('eraserBtn');
   if(eraserBtn) eraserBtn.classList.add('active');
+  applyBrushStyle();
+  updateBrushStatus();
 }
 function clearCanvas(){
   if(!ctx) return;
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
   ctx.fillStyle = '#FBF7FF';
-  ctx.fillRect(0,0,300,200);
+  ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
   erasing = false;
   strokeHistory = [];
   const eraserBtn = document.getElementById('eraserBtn');
   if(eraserBtn) eraserBtn.classList.remove('active');
+  applyBrushStyle();
+  updateBrushStatus();
 }
 /* Deshace únicamente el último trazo dibujado, dejando el resto del dibujo intacto */
 function undoLastStroke(){
@@ -1333,7 +1456,7 @@ function undoLastStroke(){
 }
 function finishDrawing(total){
   const canvas = document.getElementById('drawCanvas');
-  window._creaImg = canvas.toDataURL('image/jpeg', 0.74);
+  window._creaImg = canvas.toDataURL('image/jpeg', 0.86);
   creaNext(total);
 }
 function captureCreation(total){
@@ -1355,6 +1478,11 @@ function revealSymbol(){
   if(el) el.innerText = window._creaMsg ? `Este símbolo representa: "${window._creaMsg}"` : 'Aún no escribiste tu mensaje.';
 }
 function joinMural(){
+  if(window._creaJoined){
+    window._creaStep = 5;
+    render();
+    return;
+  }
   const artifact = {
     type:'image', src: window._creaImg, name: `${userName} ${userLastName}`.trim(), avatar:userAvatar,
     butterflyName: window._creaName || 'Mi mariposa', quality: window._creaQuality || '',
@@ -1362,13 +1490,18 @@ function joinMural(){
   };
   muralButterflies.push(artifact);
   saveMuralArtifact('dibujo', artifact);
+  window._creaJoined = true;
   window._creaStep = 5;
   render();
+}
+function goToMuralFromCreation(){
+  window._muralTab = 'mariposas';
+  setStation(5);
 }
 function creaGoNext(){
   window._creaStep = 0;
   window._creaImg = null;
-  window._creaName = null; window._creaQuality = null; window._creaCategory = null; window._creaMsg = null; window._creaRotate = 0;
+  window._creaName = null; window._creaQuality = null; window._creaCategory = null; window._creaMsg = null; window._creaRotate = 0; window._creaJoined = false;
   setStation(3);
 }
 
@@ -1942,7 +2075,8 @@ function selChipLevel2(el){
 function station4_68(){
   return `
     <div class="station-title">Explora el Mapa Mariposa</div>
-    <div class="station-sub">Toca cada punto del mapa para descubrir su historia y ver su video. ¡Completa tu pasaporte de huellas!</div>
+    <div class="station-sub">Toca los puntos brillantes del mapa para descubrir historias.</div>
+    <div style="text-align:center; margin-bottom:8px;"><span class="tap-hint">Toca un punto</span></div>
     <div class="butterfly-map-wrap">
       <img src="${MAP_68_IMG}" class="butterfly-map-img" alt="Mapa del territorio en forma de mariposa" />
       ${MAPA_68_STOPS.map((s,i)=>`<button class="map-pin map-pin-${i}" id="pin${i}" onclick="visitNode(${i})"><span class="pin-ico">${s.ico}</span></button>`).join('')}
@@ -1977,8 +2111,8 @@ const MAPA_68_STOPS = [
 let mapVisited = new Set();
 let mapFavIdx = null;
 
-/* Videos reales de cada lugar (se completan cuando se suban los clips: por ahora null = "video próximamente") */
-const MAP_VIDEOS = { 0:'/_blob/fc5512a7f2ba143582fd824f8b7cce0f', 1:'/_blob/3a03934446ee0a62a18ffd946e1c9fc0', 2:'/_blob/b3c217ad35d7c5c1a6eb92c10678a09a', 3:'/_blob/856976701ff19510f5b5e2924eda1980' };
+/* Pega aquí enlaces YouTube o MP4 reales. Los blobs antiguos no sirven fuera del editor. */
+const MAP_VIDEOS = { 0:null, 1:null, 2:null, 3:null };
 /* Toca un punto del mapa: se sella el pasaporte, se muestra su historia y se abre el video */
 function visitNode(i){
   const pin = document.getElementById('pin'+i);
@@ -2005,13 +2139,17 @@ function openVideoModal(i){
   if(title) title.innerText = s.ico + ' ' + s.name;
   if(media){
     const src = MAP_VIDEOS[i];
-    media.innerHTML = src
-      ? `<video src="${src}" controls autoplay playsinline style="width:100%; border-radius:12px; display:block;"></video>`
-      : `<div class="video-placeholder">🎬<br>El video de este lugar llegará pronto</div>`;
+    media.innerHTML = videoEmbedHTML(src);
   }
   if(text) text.innerText = s.text;
   const modal = document.getElementById('videoModal');
   if(modal) modal.classList.add('show');
+}
+function videoEmbedHTML(src){
+  if(!src) return `<div class="video-placeholder">Video pendiente<br><span style="font-size:.74rem;">La historia escrita ya está disponible.</span></div>`;
+  const yt = src.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{6,})/);
+  if(yt) return `<iframe src="https://www.youtube.com/embed/${yt[1]}" title="Video del territorio" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%; aspect-ratio:16/9; border:0; border-radius:12px;"></iframe>`;
+  return `<video src="${src}" controls playsinline style="width:100%; border-radius:12px; display:block;"></video>`;
 }
 function closeVideoModal(){
   const modal = document.getElementById('videoModal');
@@ -2216,7 +2354,8 @@ function muralButterfliesHTML(){
     ${muralButterflies.map((b,i)=>{
       const label = b.name || 'Anónimo/a';
       if(b.type==='image'){
-        return `<div class="mural-card" onclick="openLightbox(${i})"><div class="mural-butterfly"><img src="${b.src}" alt="${label}"/></div><div class="mural-name">${label}</div></div>`;
+        const artworkTitle = b.butterflyName || 'Mi creación';
+        return `<div class="mural-card" onclick="openLightbox(${i})"><div class="mural-butterfly"><img src="${b.src}" alt="${artworkTitle} de ${label}"/></div><div class="mural-name">${artworkTitle}<br><span>${label}</span></div></div>`;
       }
       const c = b.colors;
       return `<div class="mural-card" onclick="openLightbox(${i})"><div class="mural-butterfly">${miniButterflySvg(c)}</div><div class="mural-name">${label}</div></div>`;

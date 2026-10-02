@@ -9,6 +9,8 @@ const AVATARES_INFANTILES = [
 
 let avatarSeleccionado = AVATARES_INFANTILES[0].id;
 let edadSeleccionada = 7;
+let nombreTemporal = '';
+let apellidoTemporal = '';
 
 function renderOnboardingModal() {
   const container = document.getElementById('nameGate');
@@ -29,8 +31,8 @@ function renderOnboardingModal() {
     </div>
 
     <div style="display:grid; gap:9px; width:min(420px,92%);">
-      <input class="input-field" id="childNameInput" placeholder="Primer nombre" style="width:100%; max-width:none; text-align:center; font-weight:800; font-size:1rem; border-color:var(--violeta);" />
-      <input class="input-field" id="childLastNameInput" placeholder="Apellido" style="width:100%; max-width:none; text-align:center; font-weight:800; font-size:1rem; border-color:var(--violeta);" />
+      <input class="input-field" id="childNameInput" placeholder="Primer nombre" value="${nombreTemporal}" oninput="nombreTemporal=this.value" style="width:100%; max-width:none; text-align:center; font-weight:800; font-size:1rem; border-color:var(--violeta);" />
+      <input class="input-field" id="childLastNameInput" placeholder="Apellido" value="${apellidoTemporal}" oninput="apellidoTemporal=this.value" style="width:100%; max-width:none; text-align:center; font-weight:800; font-size:1rem; border-color:var(--violeta);" />
     </div>
 
     <div class="station-sub" style="margin: 4px 0 0; font-weight:800;">Toca tu avatar</div>
@@ -71,6 +73,10 @@ function seleccionarAvatar(id) {
 }
 
 function seleccionarEdad(age) {
+  const input = document.getElementById('childNameInput');
+  const lastInput = document.getElementById('childLastNameInput');
+  if (input) nombreTemporal = input.value;
+  if (lastInput) apellidoTemporal = lastInput.value;
   edadSeleccionada = age;
   renderOnboardingModal();
 }
@@ -101,6 +107,8 @@ async function confirmarOnboardingInfantil() {
   }
 
   const grupo = edadSeleccionada <= 8 ? '6-8' : '9-12';
+  nombreTemporal = nombre;
+  apellidoTemporal = apellido;
   userName = nombre;
   userLastName = apellido;
   userAvatar = AVATARES_INFANTILES.find(av => av.id === avatarSeleccionado)?.icon || '🦋';
@@ -109,26 +117,22 @@ async function confirmarOnboardingInfantil() {
   window.userAvatar = avatarSeleccionado;
   window.userAge = edadSeleccionada;
 
-  // Sincronizar en Backend PostgreSQL
+  // Configurar grupo y ocultar bienvenida de inmediato; el backend guarda en segundo plano.
+  if (typeof setGroup === 'function') setGroup(grupo);
+  const topSub = document.querySelector('.top-sub');
+  if (topSub) topSub.innerText = `${userAvatar} ${nombre} ${apellido} — ${edadSeleccionada} años`;
+  const gate = document.getElementById('nameGate');
+  if (gate) gate.style.display = 'none';
+  if (typeof render === 'function') render();
+
   try {
     const res = await ApiClient.registrarPerfil({
       nombre: `${nombre} ${apellido}`,
       avatar: userAvatar,
       edad: edadSeleccionada
     });
-    if (res && res.data) {
-      window.userId = res.data.id;
-    }
+    if (res && res.data) window.userId = res.data.id;
   } catch (e) {
     console.warn('Registro local de niño activo');
   }
-
-  // Configurar grupo y ocultar bienvenida
-  if (typeof setGroup === 'function') setGroup(grupo);
-  const topSub = document.querySelector('.top-sub');
-  if (topSub) topSub.innerText = `${userAvatar} ${nombre} ${apellido} — ${edadSeleccionada} años`;
-  const gate = document.getElementById('nameGate');
-  if (gate) gate.style.display = 'none';
-
-  if (typeof render === 'function') render();
 }
