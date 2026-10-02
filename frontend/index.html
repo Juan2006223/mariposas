@@ -409,10 +409,10 @@ button{ font-family:'Nunito',sans-serif; }
 .name-gate{
   position:absolute; inset:0; z-index:50; border-radius:38px;
   background: linear-gradient(160deg, var(--violeta-oscuro), #0E0620);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:30px; text-align:center; gap:10px;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:22px 24px; text-align:center; gap:8px; overflow-y:auto;
 }
-.name-gate .emoji{ font-size:4.4rem; }
+.name-gate .emoji{ font-size:3.1rem; }
 .name-gate input{ max-width:220px; text-align:center; }
 .name-gate button{ max-width:220px; margin-top:6px; }
 .kid-form{ width:min(420px,92%); display:grid; gap:10px; margin-top:10px; }
@@ -430,11 +430,16 @@ button{ font-family:'Nunito',sans-serif; }
 .gate-error{ color:var(--sol); min-height:18px; font-size:.78rem; font-weight:800; }
 
 /* ---- Barra "Completar y guardar" (siempre visible) ---- */
-.finish-bar{ padding:0 16px 8px; }
+.finish-bar{
+  position:sticky; top:0; z-index:30; padding:8px 16px;
+  background:linear-gradient(180deg,rgba(42,14,71,.98),rgba(42,14,71,.78));
+  backdrop-filter: blur(8px);
+}
 .finish-btn{
-  width:100%; border:none; border-radius:14px; padding:9px; cursor:pointer;
-  font-family:'Baloo 2',sans-serif; font-weight:700; font-size:0.72rem; color:var(--sol);
-  background:rgba(255,200,87,0.12); border:1px solid rgba(255,200,87,0.35);
+  width:100%; border:none; border-radius:16px; padding:12px; cursor:pointer;
+  font-family:'Baloo 2',sans-serif; font-weight:900; font-size:0.82rem; color:var(--sol);
+  background:rgba(255,200,87,0.18); border:1px solid rgba(255,200,87,0.48);
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
 }
 .finish-btn:hover{ background:rgba(255,200,87,0.2); }
 

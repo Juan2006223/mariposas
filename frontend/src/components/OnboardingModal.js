@@ -15,38 +15,47 @@ function renderOnboardingModal() {
   if (!container) return;
 
   container.innerHTML = `
-    <div style="font-size:3.4rem; animation: guideFloat 2s infinite;">🦋</div>
-    <div class="station-title" style="font-size:1.35rem; margin-top:2px;">Crea tu explorador/a</div>
-    <div class="station-sub" style="margin-bottom:8px;">Escribe tus datos y elige quién te acompaña.</div>
+    <div style="width:min(430px,94%); display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="font-size:2.6rem; animation: guideFloat 2s infinite;">🦋</div>
+      <div style="flex:1; text-align:left;">
+        <div class="station-title" style="font-size:1.2rem; margin:0;">Crea tu explorador/a</div>
+        <div class="station-sub" style="margin:0; font-size:.86rem;">Como en un juego: datos, avatar y edad.</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; width:min(430px,94%); margin:2px 0 4px;">
+      ${['1 Datos','2 Avatar','3 Edad'].map(step => `
+        <div style="border:1px solid var(--line); background:var(--card2); color:var(--ink); border-radius:12px; padding:7px 6px; font-weight:900; font-size:.72rem;">${step}</div>
+      `).join('')}
+    </div>
 
     <div style="display:grid; gap:9px; width:min(420px,92%);">
       <input class="input-field" id="childNameInput" placeholder="Primer nombre" style="width:100%; max-width:none; text-align:center; font-weight:800; font-size:1rem; border-color:var(--violeta);" />
       <input class="input-field" id="childLastNameInput" placeholder="Apellido" style="width:100%; max-width:none; text-align:center; font-weight:800; font-size:1rem; border-color:var(--violeta);" />
     </div>
 
-    <div class="station-sub" style="margin: 10px 0 4px; font-weight:800;">Toca tu avatar</div>
-    <div style="display:grid; grid-template-columns:repeat(5,52px); justify-content:center; gap:10px; margin-bottom:10px;">
+    <div class="station-sub" style="margin: 4px 0 0; font-weight:800;">Toca tu avatar</div>
+    <div style="display:grid; grid-template-columns:repeat(5,58px); justify-content:center; gap:9px; margin-bottom:4px;">
       ${AVATARES_INFANTILES.map(av => `
         <div id="av_${av.id}" onclick="seleccionarAvatar('${av.id}')" 
              title="${av.label}"
-             style="width:52px; height:52px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:1.65rem; cursor:pointer; background:${av.color}; box-shadow:0 8px 18px rgba(0,0,0,0.25); border: 3px solid ${avatarSeleccionado === av.id ? '#fff' : 'transparent'}; transition: transform 0.2s ease;">
+             style="width:58px; height:58px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.75rem; cursor:pointer; background:${av.color}; box-shadow:0 8px 18px rgba(0,0,0,0.25); border: 3px solid ${avatarSeleccionado === av.id ? '#fff' : 'transparent'}; transition: transform 0.2s ease;">
           ${av.icon}
         </div>
       `).join('')}
     </div>
 
-    <div class="station-sub" style="margin: 6px 0 2px; font-weight:800;">Toca tu edad</div>
-    <div id="ageButtonGrid" style="display:grid; grid-template-columns:repeat(4,58px); justify-content:center; gap:8px; margin-bottom:8px;">
+    <div class="station-sub" style="margin: 0; font-weight:800;">Toca tu edad</div>
+    <div id="ageButtonGrid" style="display:grid; grid-template-columns:repeat(7,44px); justify-content:center; gap:7px; margin-bottom:2px;">
       ${[6,7,8,9,10,11,12].map(age => `
         <button type="button" onclick="seleccionarEdad(${age})"
-          style="height:46px; border-radius:16px; border:1px solid var(--line); background:${edadSeleccionada === age ? 'linear-gradient(135deg,var(--sol),var(--rosa))' : 'var(--card2)'}; color:${edadSeleccionada === age ? '#2a1748' : 'var(--ink)'}; font-weight:900; cursor:pointer;">
+          style="height:44px; border-radius:14px; border:1px solid var(--line); background:${edadSeleccionada === age ? 'linear-gradient(135deg,var(--sol),var(--rosa))' : 'var(--card2)'}; color:${edadSeleccionada === age ? '#2a1748' : 'var(--ink)'}; font-weight:900; cursor:pointer;">
           ${age}
         </button>
       `).join('')}
     </div>
     <div id="onboardingError" style="min-height:18px; color:var(--sol); font-size:.78rem; font-weight:800;"></div>
 
-    <button class="primary-btn" onclick="confirmarOnboardingInfantil()" style="margin-top:10px; font-size:1.05rem;">
+    <button class="primary-btn" onclick="confirmarOnboardingInfantil()" style="position:sticky; bottom:0; width:min(420px,92%); max-width:none; margin-top:auto; padding:14px; font-size:1.05rem; z-index:2; box-shadow:0 10px 24px rgba(0,0,0,.28);">
       Guardar y comenzar
     </button>
   `;
