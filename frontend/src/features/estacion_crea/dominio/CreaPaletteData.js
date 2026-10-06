@@ -18,6 +18,7 @@
     antennaTipL: '#1B0F30',
     antennaTipR: '#1B0F30',
     body: '#1B0F30',
+    head: '#1B0F30',
   };
 
   const ZONE_TOTAL_68 = Object.keys(DEFAULT_ZONE_COLORS_68).length;

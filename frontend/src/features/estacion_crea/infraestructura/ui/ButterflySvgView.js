@@ -20,7 +20,7 @@
         <circle id="antennaTipL" class="zone" cx="74" cy="18" r="2.5" fill="${c.antennaTipL || '#1B0F30'}" onclick="paintZone('antennaTipL')"/>
         <circle id="antennaTipR" class="zone" cx="126" cy="18" r="2.5" fill="${c.antennaTipR || '#1B0F30'}" onclick="paintZone('antennaTipR')"/>
         <ellipse id="body" class="zone" cx="100" cy="90" rx="7" ry="32" fill="${c.body || '#1B0F30'}" stroke="transparent" stroke-width="8" onclick="paintZone('body')"/>
-        <circle cx="100" cy="55" r="7" fill="#1B0F30"/>
+        <circle id="head" class="zone" cx="100" cy="55" r="7" fill="${c.head || '#1B0F30'}" onclick="paintZone('head')"/>
       </svg>`;
   }
 

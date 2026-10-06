@@ -65,12 +65,13 @@ const html68 = global.window.station2_68();
 assert(typeof html68 === 'string', 'station2_68 debe retornar un string');
 assert(html68.includes('La mariposa que cambia de humor'), 'station2_68 debe contener el título correspondiente');
 assert(html68.includes('id="butterflySvg"'), 'station2_68 debe contener el SVG interactivo de la mariposa');
-assert(html68.includes('17 partes'), 'station2_68 debe mostrar el total real de zonas pintables');
+assert(html68.includes('18 partes'), 'station2_68 debe mostrar el total real de zonas pintables');
 const svg68 = global.window.butterflySvg();
 assert(svg68.includes('id="body" class="zone"'), 'el cuerpo debe ser zona pintable');
+assert(svg68.includes('id="head" class="zone"'), 'la cabeza debe ser zona pintable');
 assert(svg68.includes('id="antennaL" class="zone"'), 'la antena izquierda debe ser zona pintable');
 assert(svg68.includes('id="antennaR" class="zone"'), 'la antena derecha debe ser zona pintable');
-assert.strictEqual(global.window.ZONE_TOTAL_68, 17, 'el total de zonas pintables debe incluir alas, manchas, antenas y cuerpo');
+assert.strictEqual(global.window.ZONE_TOTAL_68, 18, 'el total de zonas pintables debe incluir alas, manchas, cabeza, antenas y cuerpo');
 
 const html912Step0 = global.window.station2_912();
 assert(typeof html912Step0 === 'string', 'station2_912 debe retornar un string');
