@@ -1,4 +1,4 @@
-const { pool, isPostgresConnected } = require('../../../db/connection');
+const { pool, isPostgresConnected, databaseUnavailableError } = require('../../../db/connection');
 
 class PerfilPostgresRepository {
   constructor() {
@@ -33,8 +33,11 @@ class PerfilPostgresRepository {
         return res.rows[0];
       } catch (err) {
         console.warn('Fallo en Postgres, guardando en fallback de memoria:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
 
     this.memoria.set(data.id, data);
     return data;
@@ -52,6 +55,25 @@ class PerfilPostgresRepository {
     return Array.from(this.memoria.values());
   }
 
+  async listarPagina(pagina = 1, limite = 20) {
+    const offset = (pagina - 1) * limite;
+    if (isPostgresConnected()) {
+      try {
+        const [rows, count] = await Promise.all([
+          pool.query('SELECT * FROM perfiles_ninos ORDER BY creado_en DESC, id DESC LIMIT $1 OFFSET $2', [limite, offset]),
+          pool.query('SELECT COUNT(*)::int AS total FROM perfiles_ninos'),
+        ]);
+        return { perfiles: rows.rows, total: count.rows[0].total };
+      } catch (err) {
+        console.warn('Fallo en Postgres al paginar perfiles:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
+      }
+    }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
+    const perfiles = Array.from(this.memoria.values()).reverse();
+    return { perfiles: perfiles.slice(offset, offset + limite), total: perfiles.length };
+  }
+
   async buscarPorId(id) {
     if (isPostgresConnected()) {
       try {
@@ -59,8 +81,10 @@ class PerfilPostgresRepository {
         return res.rows[0] || null;
       } catch (err) {
         console.warn('Fallo en Postgres al buscar por ID:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
     return this.memoria.get(id) || null;
   }
 
@@ -71,8 +95,10 @@ class PerfilPostgresRepository {
         if (res.rowCount > 0) return true;
       } catch (err) {
         console.warn('Fallo en Postgres al borrar perfil:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
     return this.memoria.delete(id);
   }
 }

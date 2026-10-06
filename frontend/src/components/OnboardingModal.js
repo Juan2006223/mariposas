@@ -126,13 +126,15 @@ async function confirmarOnboardingInfantil() {
   if (typeof render === 'function') render();
 
   try {
-    const res = await ApiClient.registrarPerfil({
+    window.profileSavePromise = ApiClient.registrarPerfil({
       nombre: `${nombre} ${apellido}`,
       avatar: userAvatar,
       edad: edadSeleccionada
     });
-    if (res && res.data) window.userId = res.data.id;
+    const res = await window.profileSavePromise;
+    if (res && res.success && res.data) window.userId = res.data.id;
+    else showPersistenceNotice((res && res.error) || 'No se pudo guardar el perfil. Revisa la conexión e intenta de nuevo.', true);
   } catch (e) {
-    console.warn('Registro local de niño activo');
+    showPersistenceNotice('No se pudo guardar el perfil. Revisa la conexión e intenta de nuevo.', true);
   }
 }

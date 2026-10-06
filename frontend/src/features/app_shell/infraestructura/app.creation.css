@@ -1,0 +1,103 @@
+﻿/* ---- Pinta mariposa 6-8 (multi-zona + stickers) ---- */
+.paint-zone{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.palette{ display:flex; gap:10px; }
+.color-blob{
+  width:30px; height:30px; border-radius:50% 50% 50% 0; cursor:pointer; border:none;
+  box-shadow: var(--shadow); transform:rotate(45deg); transition: transform .15s ease;
+}
+.color-blob.sel{ transform:rotate(45deg) scale(1.2); outline:3px solid #fff; outline-offset:2px;}
+.zone{ cursor:pointer; transition: fill .25s ease; }
+#butterflySvg{ transform-origin:50% 50%; }
+#butterflySvg.idle-shiver{ animation: idleShiver 1.6s ease-in-out infinite; }
+@keyframes idleShiver{ 0%,100%{ transform:rotate(0deg); } 25%{ transform:rotate(-2deg); } 75%{ transform:rotate(2deg); } }
+#butterflySvg.zone-jump{ animation: zoneJump .45s ease; }
+@keyframes zoneJump{ 0%{ transform:translateY(0) scale(1); } 30%{ transform:translateY(-10px) scale(1.06); } 60%{ transform:translateY(2px) scale(0.97); } 100%{ transform:translateY(0) scale(1); } }
+#butterflySvg.flying{ animation: flutterFly 1.7s ease-in-out; }
+@keyframes flutterFly{
+  0%{ transform:translate(0,0) scale(1,1) rotate(0deg); }
+  15%{ transform:translate(22px,-18px) scale(1,0.82) rotate(-7deg); }
+  30%{ transform:translate(-18px,-34px) scale(1,0.9) rotate(6deg); }
+  45%{ transform:translate(26px,-12px) scale(1,0.82) rotate(-5deg); }
+  60%{ transform:translate(-22px,-28px) scale(1,0.9) rotate(7deg); }
+  75%{ transform:translate(12px,-6px) scale(1,0.85) rotate(-3deg); }
+  100%{ transform:translate(0,0) scale(1,1) rotate(0deg); }
+}
+.progress-mini{ font-size:0.72rem; color:var(--ink-soft); }
+.landing-map{ display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap; }
+.landing-spot{
+  padding:8px 12px; border-radius:14px; background:var(--card2); border:1px solid var(--line);
+  font-size:0.76rem; cursor:pointer; color:var(--ink-soft);
+}
+.landing-spot.sel{ background:var(--sol); color:#2A0845; border-color:var(--sol); font-weight:700; }
+
+/* ---- Crea 9-12: dibujo libre ---- */
+.draw-studio{
+  background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:20px; padding:12px;
+  box-shadow:var(--shadow); margin-top:10px;
+}
+.draw-studio-head{ display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+.draw-studio-title{ font-family:'Baloo 2',sans-serif; font-weight:900; color:var(--ink); font-size:1rem; }
+.draw-status{
+  color:var(--sol); background:rgba(255,199,75,.13); border:1px solid rgba(255,199,75,.3);
+  border-radius:999px; padding:6px 10px; font-size:.72rem; font-weight:900;
+}
+.canvas-wrap{
+  position:relative; background:#F7F2FF; border-radius:22px; padding:12px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5), var(--shadow);
+}
+.canvas-wrap::before{
+  content:'Lienzo'; position:absolute; top:10px; left:14px; color:#6B5B7D; font-size:.66rem; font-weight:900;
+}
+#drawCanvas{ display:block; border-radius:16px; touch-action:none; width:100%; height:250px; background:#FBF7FF; }
+.draw-tools{ display:flex; align-items:center; gap:9px; margin-top:12px; flex-wrap:wrap; justify-content:center; }
+.tool-group{
+  display:flex; gap:7px; flex-wrap:wrap; align-items:center; justify-content:center; padding:8px;
+  background:rgba(0,0,0,.12); border:1px solid rgba(255,255,255,.08); border-radius:16px;
+}
+.tool-group-label{ width:100%; color:var(--ink-soft); font-size:.68rem; font-weight:900; text-align:center; }
+.brush-color{
+  width:38px; height:38px; border-radius:50%; cursor:pointer; border:3px solid transparent;
+  box-shadow:0 5px 12px rgba(0,0,0,.18);
+}
+.brush-color.sel{ border-color:#fff; box-shadow:0 0 0 3px var(--violeta), 0 5px 12px rgba(0,0,0,.22); transform:translateY(-2px); }
+.tool-btn{
+  border:none; border-radius:14px; padding:11px 16px; min-height:44px; font-size:0.88rem; cursor:pointer;
+  background:var(--card2); color:var(--ink); font-family:'Nunito',sans-serif; font-weight:800;
+}
+.tool-btn.active{ background: linear-gradient(135deg,var(--violeta),var(--rosa)); color:#fff; }
+.tool-btn.big{ min-height:48px; padding:12px 18px; }
+.size-chip{ min-width:48px; }
+.primary-btn{
+  width:100%; border:none; border-radius:14px; padding:11px; margin-top:14px; cursor:pointer;
+  font-family:'Baloo 2',sans-serif; font-weight:700; font-size:0.9rem; color:#fff;
+  background: linear-gradient(135deg, var(--violeta), var(--rosa)); box-shadow:0 4px 14px rgba(155,77,255,0.4);
+}
+.action-nudge{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 12px; border-radius:999px;
+  background:rgba(155,77,255,.24); border:1px solid rgba(255,255,255,.18); color:var(--violeta-suave);
+  font-family:'Baloo 2',sans-serif; font-weight:900; font-size:.82rem; animation:tapPulse 1.4s ease-in-out infinite;
+}
+.step-card{
+  background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:16px; padding:10px 12px;
+  color:var(--ink); font-size:.84rem; text-align:center; margin:8px 0;
+}
+.crea-preview{ text-align:center; }
+.crea-preview img{ max-width:170px; border-radius:14px; box-shadow: var(--shadow); }
+.viewer-card{ text-align:center; }
+.viewer-stage{
+  width:190px; height:190px; margin:0 auto 10px; border-radius:20px; background:var(--card2);
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); transition: transform .1s ease-out;
+}
+.viewer-stage img{ max-width:80%; max-height:80%; object-fit:contain; }
+.viewer-card input[type=range]{ width:180px; accent-color:var(--violeta); margin:6px 0; }
+.input-field{
+  width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--card2);
+  color:var(--ink); font-family:'Nunito',sans-serif; margin-top:8px; font-size:0.86rem;
+}
+.reflect-input{
+  width:100%; min-height:70px; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--card2);
+  color:var(--ink); font-family:'Nunito',sans-serif; margin-top:8px; margin-bottom:10px; font-size:0.86rem; resize:vertical;
+}
+.steps-row{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.step-dot{ flex:1; min-width:14%; height:6px; border-radius:4px; background:var(--line); }
+.step-dot.done{ background:var(--violeta); }

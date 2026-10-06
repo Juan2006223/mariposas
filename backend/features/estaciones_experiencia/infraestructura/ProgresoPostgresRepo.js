@@ -1,4 +1,4 @@
-const { pool, isPostgresConnected } = require('../../../db/connection');
+const { pool, isPostgresConnected, databaseUnavailableError } = require('../../../db/connection');
 
 class ProgresoPostgresRepository {
   constructor() {
@@ -32,8 +32,11 @@ class ProgresoPostgresRepository {
         return res.rows[0];
       } catch (err) {
         console.warn('Fallo en Postgres (progreso), usando memoria:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
 
     this.memoriaProgreso.set(data.id, data);
     return data;
@@ -49,6 +52,51 @@ class ProgresoPostgresRepository {
       }
     }
     return Array.from(this.memoriaProgreso.values()).filter(p => p.ninoId === ninoId);
+  }
+
+  async obtenerEspacioNino(ninoId, nombre = '') {
+    if (isPostgresConnected()) {
+      try {
+        const [artefactos, progresos] = await Promise.all([
+          pool.query("SELECT * FROM mural_artefactos WHERE nino_id = $1 OR ((nino_id IS NULL OR nino_id = 'anon') AND LOWER(TRIM(autor)) = LOWER(TRIM($2))) ORDER BY creado_en DESC", [ninoId, nombre]),
+          pool.query('SELECT * FROM progreso_estaciones WHERE nino_id = $1 ORDER BY actualizado_en DESC', [ninoId]),
+        ]);
+        return { artefactos: artefactos.rows, progresos: progresos.rows };
+      } catch (err) {
+        console.warn('Fallo en Postgres al obtener espacio del niño:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
+      }
+    }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
+    return {
+      artefactos: this.memoriaArtefactos.filter(a => (a.ninoId || a.nino_id) === ninoId || ((!a.ninoId || a.ninoId === 'anon' || !a.nino_id || a.nino_id === 'anon') && String(a.autor || '').trim().toLowerCase() === String(nombre).trim().toLowerCase())),
+      progresos: Array.from(this.memoriaProgreso.values()).filter(p => (p.ninoId || p.nino_id) === ninoId),
+    };
+  }
+
+  async contarPorNinos(perfiles) {
+    if (!perfiles.length) return {};
+    const ninoIds = perfiles.map(p => p.id);
+    if (isPostgresConnected()) {
+      try {
+        const [artefactos, progresos] = await Promise.all([
+          pool.query("SELECT p.id AS nino_id, COUNT(m.id)::int AS total FROM perfiles_ninos p LEFT JOIN mural_artefactos m ON m.nino_id = p.id OR ((m.nino_id IS NULL OR m.nino_id = 'anon') AND LOWER(TRIM(m.autor)) = LOWER(TRIM(p.nombre))) WHERE p.id = ANY($1::varchar[]) GROUP BY p.id", [ninoIds]),
+          pool.query('SELECT nino_id, COUNT(*)::int AS total FROM progreso_estaciones WHERE nino_id = ANY($1::varchar[]) GROUP BY nino_id', [ninoIds]),
+        ]);
+        const result = Object.fromEntries(ninoIds.map(id => [id, { creaciones: 0, respuestas: 0 }]));
+        artefactos.rows.forEach(row => { result[row.nino_id].creaciones = row.total; });
+        progresos.rows.forEach(row => { result[row.nino_id].respuestas = row.total; });
+        return result;
+      } catch (err) {
+        console.warn('Fallo en Postgres al contar trabajo por niño:', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
+      }
+    }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
+    return Object.fromEntries(ninoIds.map(id => [id, {
+      creaciones: this.memoriaArtefactos.filter(a => (a.ninoId || a.nino_id) === id).length,
+      respuestas: Array.from(this.memoriaProgreso.values()).filter(p => (p.ninoId || p.nino_id) === id).length,
+    }]));
   }
 
   async listarTodosProgresos() {
@@ -79,8 +127,11 @@ class ProgresoPostgresRepository {
         return res.rows[0];
       } catch (err) {
         console.warn('Fallo en Postgres (artefacto):', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
 
     this.memoriaArtefactos.push(data);
     return data;
@@ -95,8 +146,10 @@ class ProgresoPostgresRepository {
         return res.rows;
       } catch (err) {
         console.warn('Fallo en Postgres (listar artefactos):', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
     if (tipo) return this.memoriaArtefactos.filter(a => a.tipo === tipo);
     return this.memoriaArtefactos;
   }
@@ -108,8 +161,10 @@ class ProgresoPostgresRepository {
         if (res.rowCount > 0) return true;
       } catch (err) {
         console.warn('Fallo en Postgres (borrar artefacto):', err.message);
+        if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError(err);
       }
     }
+    if (process.env.REQUIRE_DATABASE === 'true') throw databaseUnavailableError();
     const before = this.memoriaArtefactos.length;
     this.memoriaArtefactos = this.memoriaArtefactos.filter(a => a.id !== id);
     return this.memoriaArtefactos.length < before;

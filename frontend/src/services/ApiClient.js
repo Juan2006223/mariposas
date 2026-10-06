@@ -93,18 +93,31 @@ const ApiClient = {
 
   async registrarMetrica({ ninoId, tipoEvento, categoria, detalles, duracionSegundos }) {
     try {
-      await fetch(`${API_BASE}/metricas/evento`, {
+      const res = await fetch(`${API_BASE}/metricas/evento`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ninoId, tipoEvento, categoria, detalles, duracionSegundos })
       });
-    } catch (e) {}
+      return await readApiJson(res);
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
   },
 
-  async obtenerDashboard(adminToken) {
+  async obtenerDashboard(adminToken, pagina = 1) {
     try {
       const headers = adminToken ? { Authorization: `Bearer ${adminToken}` } : {};
-      const res = await fetch(`${API_BASE}/admin/dashboard`, { headers });
+      const res = await fetch(`${API_BASE}/admin/dashboard?pagina=${encodeURIComponent(pagina)}&limite=20`, { headers });
+      return await readApiJson(res);
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+  async obtenerEspacioParticipante(id, adminToken) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/participantes/${encodeURIComponent(id)}/espacio`, {
+        headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {}
+      });
       return await readApiJson(res);
     } catch (err) {
       return { success: false, error: err.message };

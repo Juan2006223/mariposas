@@ -1,0 +1,5 @@
+frontend/
+tests/
+scripts/
+.agents/
+node_modules/

@@ -29,20 +29,53 @@ class ObtenerProgresoNinoUseCase {
 }
 
 class GuardarArtefactoMuralUseCase {
-  constructor(progresoRepository) {
+  constructor(progresoRepository, assetStorage = null) {
     this.progresoRepository = progresoRepository;
+    this.assetStorage = assetStorage;
   }
 
   async ejecutar({ ninoId, tipo, autor, contenido }) {
     if (!tipo || !autor || !contenido) {
       throw new Error('Tipo, autor y contenido son obligatorios para el mural.');
     }
+    const contenidoProcesado = await this.procesarImagenes(contenido, { ninoId, tipo });
     return await this.progresoRepository.guardarArtefacto({
       ninoId,
       tipo,
       autor,
-      contenido,
+      contenido: contenidoProcesado,
     });
+  }
+
+  async procesarImagenes(contenido, { ninoId, tipo }) {
+    if (!this.esImagenDataUri(contenido.src)) return contenido;
+    if (!this.assetStorage) {
+      throw new Error('No hay almacenamiento de imágenes configurado para el mural.');
+    }
+
+    const publicId = [
+      tipo || 'mural',
+      ninoId || 'anon',
+      Date.now(),
+    ].join('_').replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    const asset = await this.assetStorage.subirDataUri(contenido.src, { publicId });
+    return {
+      ...contenido,
+      src: asset.url,
+      cloudinaryPublicId: asset.publicId,
+      storage: 'cloudinary',
+      imageMeta: {
+        formato: asset.formato,
+        ancho: asset.ancho,
+        alto: asset.alto,
+        bytes: asset.bytes,
+      },
+    };
+  }
+
+  esImagenDataUri(src) {
+    return typeof src === 'string' && /^data:image\/[a-zA-Z0-9.+-]+;base64,/.test(src);
   }
 }
 

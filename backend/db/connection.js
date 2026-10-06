@@ -8,7 +8,7 @@ function buildPoolConfig() {
     return {
       connectionString: process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: true },
-      connectionTimeoutMillis: 2000,
+      connectionTimeoutMillis: 15000,
     };
   }
 
@@ -19,7 +19,7 @@ function buildPoolConfig() {
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,
     ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: true } : undefined,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 15000,
   };
 }
 
@@ -27,20 +27,40 @@ const pool = new Pool(buildPoolConfig());
 
 let isConnected = false;
 
-async function checkConnection() {
-  try {
-    const client = await pool.connect();
-    isConnected = true;
-    client.release();
-    console.log('✅ Conexión exitosa a PostgreSQL');
-    return true;
-  } catch (err) {
-    isConnected = false;
-    console.warn('⚠️ No se pudo conectar a PostgreSQL local:', err.message);
-    console.warn('ℹ️ El backend operará en modo memoria de respaldo con sincronización reactiva.');
-    return false;
-  }
+function databaseUnavailableError(cause) {
+  const error = new Error('Neon no está disponible. Los datos no se guardaron; intenta de nuevo.');
+  error.code = 'DATABASE_UNAVAILABLE';
+  if (cause) error.cause = cause;
+  return error;
 }
+
+async function checkConnection() {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const client = await pool.connect();
+      isConnected = true;
+      client.release();
+      console.log('✅ Conexión exitosa a PostgreSQL');
+      return true;
+    } catch (err) {
+      isConnected = false;
+      console.warn(`⚠️ Intento ${attempt}/3 de PostgreSQL falló:`, err.message);
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1500));
+    }
+  }
+  console.warn('ℹ️ PostgreSQL sigue desconectado; se reintentará en segundo plano.');
+  return false;
+}
+
+pool.on('error', err => {
+  isConnected = false;
+  console.warn('⚠️ Conexión inactiva de PostgreSQL perdió el enlace:', err.message);
+});
+
+const reconnectTimer = setInterval(() => {
+  if (!isConnected) checkConnection();
+}, 15000);
+reconnectTimer.unref();
 
 async function initSchema() {
   if (!isConnected) return false;
@@ -61,4 +81,5 @@ module.exports = {
   checkConnection,
   initSchema,
   isPostgresConnected: () => isConnected,
+  databaseUnavailableError,
 };
