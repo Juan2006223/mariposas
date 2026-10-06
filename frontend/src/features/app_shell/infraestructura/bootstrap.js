@@ -96,8 +96,10 @@
   loadSequential(shellScripts, () => {
     wireStationTelemetry();
     loadScript('src/services/ApiClient.js', () => hydrateMuralFromApi());
-    loadScript('src/components/OnboardingModal.js', () => {
-      if (typeof renderOnboardingModal === 'function') renderOnboardingModal();
+    loadScript('src/components/OnboardingMuralCarousel.js', () => {
+      loadScript('src/components/OnboardingModal.js', () => {
+        if (typeof renderOnboardingModal === 'function') renderOnboardingModal();
+      });
     });
     loadScript('src/components/AdminDashboardV2.js');
     loadSlice(0, () => {

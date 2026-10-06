@@ -107,6 +107,7 @@
       if (live()) {
         setButton('Mariposa publicada', true);
         setStatus('Mariposa publicada. Ya quedó guardada para verla después.');
+        notice('Mariposa guardada en el mural.', false);
       }
     } catch (e) {
       job.state = 'failed';

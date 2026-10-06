@@ -62,6 +62,7 @@ const tick = () => new Promise((r) => setImmediate(r));
   assert.strictEqual(item.pending, false);
   assert.strictEqual(els.publishButterflyBtn68.innerText, 'Mariposa publicada');
   assert.strictEqual(window.muralButterflies.length, 1, 'no se duplica el item');
+  assert(notices.some((n) => !n.err && n.m.includes('guardada')), 'debe mostrar aviso de éxito al finalizar');
   console.log('✅ El item local se actualiza con la URL de Cloudinary.');
 
   // 3. Si falla, la mariposa no se pierde y se puede reintentar

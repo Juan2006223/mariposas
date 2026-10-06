@@ -33,6 +33,26 @@
   color:var(--sol); font-size:.78rem; font-weight:800; text-align:center;
 }
 .missing-zone-hint.done{ color:var(--verde); }
+.onboarding-mural{
+  width:min(520px,94%); margin:4px auto 8px; padding:10px; border-radius:16px;
+  background:rgba(255,255,255,.045); border:1px solid var(--line); overflow:hidden;
+}
+.onboarding-mural-head{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  color:var(--ink); font-family:'Baloo 2',sans-serif; font-weight:900; font-size:.9rem;
+}
+.onboarding-mural-track{
+  display:flex; gap:10px; margin-top:8px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:2px;
+}
+.onboarding-mural-card{
+  flex:0 0 94px; scroll-snap-align:center; color:var(--ink-soft); font-size:.68rem; font-weight:800; text-align:center;
+}
+.onboarding-mural-card img,.onboarding-mural-fallback{
+  width:94px; height:62px; border-radius:12px; object-fit:cover; background:var(--card2);
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+}
+.onboarding-mural-card span{ display:block; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.onboarding-mural-empty{ margin-top:6px; color:var(--ink-soft); font-size:.78rem; font-weight:800; text-align:center; }
 .landing-map{ display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap; }
 .landing-spot{
   padding:8px 12px; border-radius:14px; background:var(--card2); border:1px solid var(--line);

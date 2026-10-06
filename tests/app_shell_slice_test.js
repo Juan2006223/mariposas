@@ -23,6 +23,10 @@ const files = [
   'infraestructura/ui/AppShellView.js',
   'infraestructura/bootstrap.js',
 ].map((f) => base + f);
+const componentFiles = [
+  'frontend/src/components/OnboardingMuralCarousel.js',
+  'frontend/src/components/OnboardingModal.js',
+];
 
 // 1. Ningún archivo JS del slice supera 200 líneas
 const all = [];
@@ -34,9 +38,14 @@ const all = [];
   });
 })(path.join(root, base));
 files.forEach((f) => assert(fs.existsSync(path.join(root, f)), `Archivo no existe: ${f}`));
+componentFiles.forEach((f) => assert(fs.existsSync(path.join(root, f)), `Archivo no existe: ${f}`));
 all.forEach((p) => {
   const lines = fs.readFileSync(p, 'utf8').split('\n').length;
   assert(lines <= 200, `${p} supera 200 líneas (${lines})`);
+});
+componentFiles.forEach((f) => {
+  const lines = fs.readFileSync(path.join(root, f), 'utf8').split('\n').length;
+  assert(lines <= 200, `${f} supera 200 líneas (${lines})`);
 });
 console.log('✅ Archivos de app_shell existen y tienen <= 200 líneas.');
 
@@ -74,4 +83,12 @@ console.log('✅ frontend/index.html ya no contiene las funciones del app shell.
 const boot = fs.readFileSync(path.join(root, files[files.length - 1]), 'utf8');
 const order = ['app_assets', 'mural_digital', 'galeria_territorio', 'estacion_mapa', 'estacion_crea', 'estacion_voz'].map((n) => boot.indexOf(`features/${n}/infraestructura/loader.js`));
 assert(order.every((v, i) => v >= 0 && (i === 0 || v > order[i - 1])), 'orden de slices en bootstrap');
+assert(boot.includes('src/components/OnboardingMuralCarousel.js'), 'bootstrap debe cargar el carrusel del onboarding antes del modal');
+
+// 5. Carrusel de onboarding usa datos ya hidratados del mural
+ctx.window.muralButterflies = [{ type: 'image', src: 'https://res.cloudinary.com/demo/a.jpg', butterflyName: 'Ala Sol' }];
+vm.runInContext(fs.readFileSync(path.join(root, componentFiles[0]), 'utf8'), ctx, { filename: componentFiles[0] });
+const carousel = ctx.window.onboardingMuralCarouselHTML();
+assert(carousel.includes('Mural comunitario'), 'el carrusel debe titular el mural');
+assert(carousel.includes('https://res.cloudinary.com/demo/a.jpg'), 'el carrusel debe mostrar imágenes ya hidratadas');
 console.log('🎉 Todas las validaciones de app_shell pasaron.');

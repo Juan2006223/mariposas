@@ -56,6 +56,7 @@ function renderOnboardingModal() {
       `).join('')}
     </div>
     <div id="onboardingError" style="min-height:18px; color:var(--sol); font-size:.78rem; font-weight:800;"></div>
+    ${typeof onboardingMuralCarouselHTML === 'function' ? onboardingMuralCarouselHTML() : ''}
 
     <button class="primary-btn" onclick="confirmarOnboardingInfantil()" style="position:sticky; bottom:0; width:min(420px,92%); max-width:none; margin-top:auto; padding:14px; font-size:1.05rem; z-index:2; box-shadow:0 10px 24px rgba(0,0,0,.28);">
       Guardar y comenzar
