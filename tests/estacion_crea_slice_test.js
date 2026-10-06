@@ -10,6 +10,7 @@ const files = [
   'frontend/src/features/estacion_crea/dominio/CreaState.js',
   'frontend/src/features/estacion_crea/aplicacion/DrawingCanvasActions.js',
   'frontend/src/features/estacion_crea/aplicacion/CreaActions.js',
+  'frontend/src/features/estacion_crea/aplicacion/Publish68Actions.js',
   'frontend/src/features/estacion_crea/aplicacion/Crea912Actions.js',
   'frontend/src/features/estacion_crea/infraestructura/ui/ButterflySvgView.js',
   'frontend/src/features/estacion_crea/infraestructura/ui/Pinta68View.js',
@@ -42,6 +43,7 @@ require(path.join(__dirname, '../frontend/src/features/estacion_crea/dominio/Cre
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/dominio/CreaState.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/aplicacion/DrawingCanvasActions.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/aplicacion/CreaActions.js'));
+require(path.join(__dirname, '../frontend/src/features/estacion_crea/aplicacion/Publish68Actions.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/aplicacion/Crea912Actions.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/infraestructura/ui/ButterflySvgView.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/infraestructura/ui/Pinta68View.js'));

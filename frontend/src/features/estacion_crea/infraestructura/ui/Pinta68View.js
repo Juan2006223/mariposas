@@ -1,6 +1,7 @@
 // frontend/src/features/estacion_crea/infraestructura/ui/Pinta68View.js
 (function () {
   function station2_68() {
+    window._publish68 = null;
     if (window.CreaState && typeof window.CreaState.reset68 === 'function') {
       window.CreaState.reset68();
     } else {
@@ -40,7 +41,7 @@
           ${landingSpots.map((spot) => `<div class="landing-spot" onclick="selLand(this)">${spot}</div>`).join('')}
         </div>
         <div id="saveButterflyBlock68" style="margin-top:14px;">
-          <button class="primary-btn" onclick="publishPaintedButterfly68(this)">Tomar foto y publicar mi mariposa</button>
+          <button class="primary-btn" id="publishButterflyBtn68" onclick="publishPaintedButterfly68(this)">Tomar foto y publicar mi mariposa</button>
           <div class="station-sub" id="saveButterflyStatus68" style="min-height:16px; margin-top:8px;"></div>
         </div>
         <div id="continueBlock2_68" style="display:none; margin-top:10px;">

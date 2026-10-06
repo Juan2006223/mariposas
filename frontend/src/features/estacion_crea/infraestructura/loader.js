@@ -6,6 +6,7 @@
     'src/features/estacion_crea/dominio/CreaState.js',
     'src/features/estacion_crea/aplicacion/DrawingCanvasActions.js',
     'src/features/estacion_crea/aplicacion/CreaActions.js',
+    'src/features/estacion_crea/aplicacion/Publish68Actions.js',
     'src/features/estacion_crea/aplicacion/Crea912Actions.js',
     'src/features/estacion_crea/infraestructura/ui/ButterflySvgView.js',
     'src/features/estacion_crea/infraestructura/ui/Pinta68View.js',
