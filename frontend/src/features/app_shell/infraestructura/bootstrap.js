@@ -2,11 +2,6 @@
   window.API_BASE = 'https://mariposas-production.up.railway.app/api';
 
   const shellScripts = [
-    'infraestructura/ui/AppShellIcons.js',
-    'infraestructura/ui/ShellNavIcons.js',
-    'infraestructura/ui/ShellControlIcons.js',
-    'infraestructura/ui/ShellTerritoryIcons.js',
-    'infraestructura/ui/ShellLegacyIcons.js',
     'dominio/AppAudioData.js',
     'dominio/AppState.js',
     'dominio/Station1Data.js',
@@ -34,14 +29,29 @@
     document.body.appendChild(script);
   }
 
+  // Descarga en paralelo y ejecuta en orden (async=false): sin una ida y vuelta por archivo
   function loadSequential(srcs, done) {
-    if (!srcs.length) return done();
-    const next = () => loadSequential(srcs.slice(1), done);
-    loadScript(srcs[0], next, () => {
-      console.error('Failed loading script:', srcs[0]);
-      next();
+    let pending = srcs.length;
+    if (!pending) return done();
+    const finish = () => { pending -= 1; if (pending === 0) done(); };
+    srcs.forEach((src) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.onload = finish;
+      script.onerror = () => { console.error('Failed loading script:', src); finish(); };
+      document.body.appendChild(script);
     });
   }
+
+  // Los loaders de cada slice se piden desde ya, para que no esperen su turno en la red
+  sliceLoaders.forEach(([src]) => {
+    const hint = document.createElement('link');
+    hint.rel = 'preload';
+    hint.as = 'script';
+    hint.href = src;
+    document.head.appendChild(hint);
+  });
 
   function loadSlice(index, done) {
     if (index >= sliceLoaders.length) return done();
@@ -84,7 +94,6 @@
   // app_shell (estado/acciones) -> app_assets -> mural_digital -> galeria_territorio
   // -> estacion_mapa -> estacion_crea -> estacion_voz -> render
   loadSequential(shellScripts, () => {
-    if (typeof window.hydrateIcons === 'function') window.hydrateIcons();
     wireStationTelemetry();
     loadScript('src/services/ApiClient.js', () => hydrateMuralFromApi());
     loadScript('src/components/OnboardingModal.js', () => {

@@ -19,7 +19,7 @@
         <path d="M104,52 C112,35 122,28 126,18" stroke="#1B0F30" stroke-width="3" fill="none" stroke-linecap="round"/>
         <circle cx="74" cy="18" r="2.5" fill="#1B0F30"/>
         <circle cx="126" cy="18" r="2.5" fill="#1B0F30"/>
-        <ellipse cx="100" cy="90" rx="7" ry="32" fill="#1B0F30"/>
+        <ellipse id="body" class="zone" cx="100" cy="90" rx="7" ry="32" fill="${c.body || '#1B0F30'}" stroke="transparent" stroke-width="8" onclick="paintZone('body')"/>
         <circle cx="100" cy="55" r="7" fill="#1B0F30"/>
       </svg>`;
   }

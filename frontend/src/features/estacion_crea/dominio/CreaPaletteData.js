@@ -13,9 +13,10 @@
     spotRU2: '#22193A',
     spotRD1: '#22193A',
     spotRD2: '#22193A',
+    body: '#1B0F30',
   };
 
-  const ZONE_TOTAL_68 = 12;
+  const ZONE_TOTAL_68 = Object.keys(DEFAULT_ZONE_COLORS_68).length;
 
   const PALETTE_COLORS_68 = [
     ['#9B4DFF', 'violeta'],

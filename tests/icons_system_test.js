@@ -95,9 +95,11 @@ const offenders = files.filter((f) => emoji.test(fs.readFileSync(f, 'utf8')));
 assert.deepStrictEqual(offenders.map((f) => path.relative(root, f)), [], 'archivos con emojis como UI');
 console.log('✅ Sin emojis como iconografía de interfaz.');
 
-// 7. Los archivos de iconos se cargan en bootstrap y en cada loader de slice
-const boot = fs.readFileSync(path.join(root, 'frontend/src/features/app_shell/infraestructura/bootstrap.js'), 'utf8');
-['AppShellIcons', 'ShellNavIcons', 'ShellControlIcons', 'ShellTerritoryIcons', 'ShellLegacyIcons'].forEach((n) => assert(boot.includes(n + '.js'), `bootstrap debe cargar ${n}`));
+// 7. Los iconos del shell se cargan en index.html (antes del bootstrap, para estar listos al primer render) y los de cada slice en su loader
+const indexHtml = fs.readFileSync(path.join(root, 'frontend/index.html'), 'utf8');
+assert(indexHtml.indexOf('ShellLegacyIcons.js') < indexHtml.indexOf('bootstrap.js'), 'los iconos del shell deben cargarse antes del bootstrap');
+assert(indexHtml.includes('hydrateIcons()'), 'index.html debe hidratar los iconos estáticos');
+['AppShellIcons', 'ShellNavIcons', 'ShellControlIcons', 'ShellTerritoryIcons', 'ShellLegacyIcons'].forEach((n) => assert(indexHtml.includes(n + '.js'), `index.html debe cargar ${n}`));
 ['estacion_mapa/MapaIcons', 'estacion_crea/CreaIcons', 'estacion_voz/VozIcons', 'mural_digital/MuralIcons', 'galeria_territorio/GaleriaIcons'].forEach((p) => {
   const [slice, file] = p.split('/');
   const loader = fs.readFileSync(path.join(root, `frontend/src/features/${slice}/infraestructura/loader.js`), 'utf8');

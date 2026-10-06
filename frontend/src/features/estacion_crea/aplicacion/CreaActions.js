@@ -33,7 +33,7 @@
     }
     window.zonesPainted.add(id);
 
-    const total = window.ZONE_TOTAL_68 || 12;
+    const total = (svg && svg.querySelectorAll('.zone').length) || window.ZONE_TOTAL_68 || 13;
     const prog = document.getElementById('zoneProg');
     if (prog) prog.innerText = `${window.zonesPainted.size} de ${total} partes pintadas`;
 
