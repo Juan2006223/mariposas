@@ -97,7 +97,7 @@ button{ font-family:'Nunito',sans-serif; }
 .lightbox-media svg{ width:100%; height:100%; }
 .lightbox-name{ font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.1rem; color:var(--violeta-suave); text-align:center; }
 .lightbox-extra{ font-size:0.8rem; color:var(--ink-soft); text-align:center; line-height:1.5; }
-/* ---- GalerÃ­a del territorio (EstaciÃ³n 6, compartida) ---- */
+/* ---- Galería del territorio (Estación 6, compartida) ---- */
 .gallery-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-top:12px; }
 .gallery-thumb{ aspect-ratio:1; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,0.15); }
 .gallery-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -106,9 +106,9 @@ button{ font-family:'Nunito',sans-serif; }
 
 /* ==========================================================================
    VISTA DE ESCRITORIO: en pantallas anchas (computador/tablet grande) la app
-   se ve como una aplicaciÃ³n amplia en vez del mockup angosto de celular.
+   se ve como una aplicación amplia en vez del mockup angosto de celular.
    En celular (por debajo de 900px) NO se aplica nada de este bloque: se ve
-   exactamente igual que el diseÃ±o original para mÃ³vil.
+   exactamente igual que el diseño original para móvil.
    ========================================================================== */
 @media (min-width: 900px){
   body{ padding:46px 32px 70px; }
@@ -136,3 +136,8 @@ button{ font-family:'Nunito',sans-serif; }
   .finish-bar{ padding:8px 40px; }
   .lightbox-media{ width:min(50vw,420px); }
 }
+
+/* Iconografía propia (SVG inline): escala con el tamaño de fuente del contenedor */
+.mi{width:1.25em;height:1.25em;display:inline-block;vertical-align:-0.25em;flex:none;overflow:visible;}
+.mi-vacio-mariposas,.mi-vacio-palabras,.mi-vacio-huellas,.mi-vacio-descubrimientos,.mi-vacio-galeria{width:3.4em;height:3.4em;display:block;margin:0 auto 8px;}
+.hotspot .mi,.carita .mi,.avatar-btn .mi,.mic-btn .mi{width:1.1em;height:1.1em;vertical-align:middle;}

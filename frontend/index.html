@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alas de Mariposa â€” Prototipo</title>
+<title>Alas de Mariposa — Prototipo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -15,36 +15,36 @@
 <body>
 <div class="wrap">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-    <div class="top-label" style="margin-bottom:0;">ðŸ¦‹ Alas de Mariposa</div>
+    <div class="top-label" style="margin-bottom:0;"><i data-mi="mariposa"></i> Alas de Mariposa</div>
     <button onclick="toggleAdminDashboard()" style="background:var(--card2); border:1px solid var(--line); color:var(--sol); font-size:0.75rem; padding:6px 10px; border-radius:12px; cursor:pointer; font-weight:700;">
-      ðŸ“Š Admin
+      <i data-mi="admin"></i> Admin
     </button>
   </div>
   <div class="top-sub"></div>
 
   <div class="phone">
     <div class="name-gate" id="nameGate">
-      <div class="emoji">ðŸ¦‹</div>
-      <div class="station-title" style="font-size:1.25rem; margin-top:4px;">Â¡Bienvenido a Mariposa Viva!</div>
+      <div class="emoji"><i data-mi="mariposa"></i></div>
+      <div class="station-title" style="font-size:1.25rem; margin-top:4px;">¡Bienvenido a Mariposa Viva!</div>
       <div class="station-sub" style="margin-bottom:6px;">Primero arma tu personaje explorador.</div>
       <div class="kid-form">
         <input class="input-field" id="nameInput" placeholder="Primer nombre"/>
         <input class="input-field" id="lastNameInput" placeholder="Apellido"/>
         <div class="station-sub" style="margin:0;">Elige tu avatar</div>
         <div class="avatar-pick" id="avatarPick">
-          <button class="avatar-btn sel" onclick="pickAvatar(this,'ðŸ¦‹')">ðŸ¦‹</button>
-          <button class="avatar-btn" onclick="pickAvatar(this,'âœ¨')">âœ¨</button>
-          <button class="avatar-btn" onclick="pickAvatar(this,'ðŸ›')">ðŸ›</button>
-          <button class="avatar-btn" onclick="pickAvatar(this,'ðŸŒº')">ðŸŒº</button>
-          <button class="avatar-btn" onclick="pickAvatar(this,'ðŸ¶')">ðŸ¶</button>
+          <button class="avatar-btn sel" onclick="pickAvatar(this,'mariposa')"><i data-mi="mariposa"></i></button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'estrella')"><i data-mi="estrella"></i></button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'oruga')"><i data-mi="oruga"></i></button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'colibri')"><i data-mi="colibri"></i></button>
+          <button class="avatar-btn" onclick="pickAvatar(this,'canelo')"><i data-mi="canelo"></i></button>
         </div>
         <div class="gate-error" id="nameGateError"></div>
       </div>
       <button class="primary-btn" onclick="submitName()">Siguiente</button>
     </div>
     <div class="name-gate" id="ageGate" style="display:none;">
-      <div class="emoji">ðŸ¦‹</div>
-      <div class="station-title" style="font-size:1.2rem; margin-top:4px;" id="ageGateGreeting">Â¡Hola!</div>
+      <div class="emoji"><i data-mi="mariposa"></i></div>
+      <div class="station-title" style="font-size:1.2rem; margin-top:4px;" id="ageGateGreeting">¡Hola!</div>
       <div class="station-sub" style="margin-bottom:6px;">Toca tu edad para abrir tu ruta.</div>
       <div class="age-grid" id="ageGrid">
         <button class="age-chip" onclick="pickAge(this,6)">6</button>
@@ -59,29 +59,29 @@
       <button class="primary-btn" style="background: linear-gradient(135deg,var(--sol),var(--rosa));" onclick="chooseGroup()">Entrar al juego</button>
     </div>
     <div class="age-toggle" style="display:none;">
-      <button class="age-btn active" id="btnG1" onclick="setGroup('6-8')">Grupo 6â€“8 aÃ±os</button>
-      <button class="age-btn" id="btnG2" onclick="setGroup('9-12')">Grupo 9â€“12 aÃ±os</button>
+      <button class="age-btn active" id="btnG1" onclick="setGroup('6-8')">Grupo 6–8 años</button>
+      <button class="age-btn" id="btnG2" onclick="setGroup('9-12')">Grupo 9–12 años</button>
     </div>
     <div class="finish-bar" id="finishBar">
-      <button class="finish-btn" onclick="finishSession()">Finalizar turno y registrar otro niÃ±o/a</button>
+      <button class="finish-btn" onclick="finishSession()">Finalizar turno y registrar otro niño/a</button>
     </div>
 
     <div class="screen" id="screen"></div>
 
     <div class="tabbar">
-      <button class="tab active" data-st="1" onclick="setStation(1)"><span class="icon">ðŸ§º</span>Escucha</button>
-      <button class="tab" data-st="2" onclick="setStation(2)"><span class="icon">ðŸŽ¨</span>Pinta</button>
-      <button class="tab" data-st="3" onclick="setStation(3)"><span class="icon">ðŸŽ¤</span>Voz</button>
-      <button class="tab" data-st="4" onclick="setStation(4)"><span class="icon">ðŸ—ºï¸</span>Mapa</button>
-      <button class="tab" data-st="5" onclick="setStation(5)"><span class="icon">âœ¨</span>Mural</button>
-      <button class="tab" data-st="6" onclick="setStation(6)"><span class="icon">ðŸ“¸</span>GalerÃ­a</button>
+      <button class="tab active" data-st="1" onclick="setStation(1)"><span class="icon"><i data-mi="escucha"></i></span>Escucha</button>
+      <button class="tab" data-st="2" onclick="setStation(2)"><span class="icon"><i data-mi="pinta"></i></span>Pinta</button>
+      <button class="tab" data-st="3" onclick="setStation(3)"><span class="icon"><i data-mi="voz"></i></span>Voz</button>
+      <button class="tab" data-st="4" onclick="setStation(4)"><span class="icon"><i data-mi="mapa"></i></span>Mapa</button>
+      <button class="tab" data-st="5" onclick="setStation(5)"><span class="icon"><i data-mi="mural"></i></span>Mural</button>
+      <button class="tab" data-st="6" onclick="setStation(6)"><span class="icon"><i data-mi="galeria"></i></span>Galería</button>
     </div>
   </div>
 </div>
 
 <div class="video-modal" id="galleryModal" onclick="closeGalleryModal()">
   <div class="video-modal-inner" onclick="event.stopPropagation()">
-    <button class="video-modal-close" onclick="closeGalleryModal()">âœ•</button>
+    <button class="video-modal-close" onclick="closeGalleryModal()"><i data-mi="cerrar"></i></button>
     <div class="video-modal-title" id="galleryModalTitle"></div>
     <div class="video-modal-media" id="galleryModalMedia"></div>
     <div class="video-modal-text" id="galleryModalText"></div>
@@ -90,7 +90,7 @@
 
 <div class="video-modal" id="placeImgModal" onclick="closePlaceImgModal()">
   <div class="video-modal-inner" onclick="event.stopPropagation()">
-    <button class="video-modal-close" onclick="closePlaceImgModal()">âœ•</button>
+    <button class="video-modal-close" onclick="closePlaceImgModal()"><i data-mi="cerrar"></i></button>
     <div class="video-modal-title" id="placeImgTitle"></div>
     <div class="video-modal-media" id="placeImgMedia"></div>
     <div class="video-modal-text" id="placeImgText"></div>
@@ -99,7 +99,7 @@
 
 <div class="video-modal" id="videoModal" onclick="closeVideoModal()">
   <div class="video-modal-inner" onclick="event.stopPropagation()">
-    <button class="video-modal-close" onclick="closeVideoModal()">âœ•</button>
+    <button class="video-modal-close" onclick="closeVideoModal()"><i data-mi="cerrar"></i></button>
     <div class="video-modal-title" id="videoModalTitle"></div>
     <div class="video-modal-media" id="videoModalMedia"></div>
     <div class="video-modal-text" id="videoModalText"></div>
@@ -111,7 +111,7 @@
     <div class="lightbox-media" id="lightboxMedia"></div>
     <div class="lightbox-name" id="lightboxName"></div>
     <div class="lightbox-extra" id="lightboxExtra"></div>
-    <button class="primary-btn" style="max-width:220px;" onclick="closeLightbox()">Cerrar âœ•</button>
+    <button class="primary-btn" style="max-width:220px;" onclick="closeLightbox()">Cerrar <i data-mi="cerrar"></i></button>
   </div>
 </div>
 

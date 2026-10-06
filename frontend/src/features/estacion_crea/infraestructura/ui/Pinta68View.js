@@ -34,7 +34,7 @@
       <div class="station-sub" id="soundHint" style="min-height:16px; margin-bottom:0;"></div>
       <div class="progress-mini" id="zoneProg">0 de 12 partes pintadas</div>
       <div id="landingBlock" style="display:none; width:100%;">
-        <div class="station-sub">Tu mariposa cobró vida ✨ ¿dónde aterriza?</div>
+        <div class="station-sub">Tu mariposa cobró vida ${miIcon('estrella')} ¿dónde aterriza?</div>
         <div class="landing-map">
           ${landingSpots.map((spot) => `<div class="landing-spot" onclick="selLand(this)">${spot}</div>`).join('')}
         </div>

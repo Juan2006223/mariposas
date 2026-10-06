@@ -13,7 +13,7 @@
       <div style="text-align:center; margin-bottom:8px;"><span class="tap-hint">Toca un punto</span></div>
       <div class="butterfly-map-wrap">
         <img src="${mapImg}" class="butterfly-map-img" alt="Mapa del territorio en forma de mariposa" />
-        ${stops.map((s, i) => `<button class="map-pin map-pin-${i}" id="pin${i}" onclick="visitNode(${i})"><span class="pin-ico">${s.ico}</span></button>`).join('')}
+        ${stops.map((s, i) => `<button class="map-pin map-pin-${i}" id="pin${i}" onclick="visitNode(${i})"><span class="pin-ico">${miIcon(s.ico)}</span></button>`).join('')}
       </div>
       <div class="map-dark">
         <div class="passport-row" id="passportRow">

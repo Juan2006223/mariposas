@@ -39,6 +39,7 @@ global.document = {
   createElement: () => ({}),
   body: { appendChild() {} },
 };
+require('./icons_setup.js');
 Object.keys(global.window).forEach((k) => { if (!(k in global)) global[k] = global.window[k]; });
 
 files.filter((f) => !f.endsWith('loader.js')).forEach((f) => require(path.join(__dirname, '..', f)));

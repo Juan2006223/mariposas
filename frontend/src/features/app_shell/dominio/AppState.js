@@ -3,7 +3,7 @@ let group = '6-8';
 let station = 1;
 let userName = '';
 let userLastName = '';
-let userAvatar = 'ðŸ¦‹';
+let userAvatar = 'mariposa';
 let userAge = null;
 window.userId = null;
 /* Estado global del Mural Digital Vivo: mariposas, voces/audios y huellas del recorrido */

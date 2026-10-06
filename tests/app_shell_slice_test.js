@@ -8,6 +8,11 @@ console.log('🧪 Iniciando verificación del slice app_shell...');
 const root = path.join(__dirname, '..');
 const base = 'frontend/src/features/app_shell/';
 const files = [
+  'infraestructura/ui/AppShellIcons.js',
+  'infraestructura/ui/ShellNavIcons.js',
+  'infraestructura/ui/ShellControlIcons.js',
+  'infraestructura/ui/ShellTerritoryIcons.js',
+  'infraestructura/ui/ShellLegacyIcons.js',
   'dominio/AppAudioData.js',
   'dominio/AppState.js',
   'dominio/Station1Data.js',
@@ -55,6 +60,7 @@ files.filter((f) => !f.endsWith('bootstrap.js')).forEach((f) => {
   'render', 'setStation', 'setGroup', 'submitName', 'chooseGroup', 'pickAvatar', 'pickAge',
   'finishSession', 'saveMuralArtifact', 'hydrateMuralFromApi', 'showPersistenceNotice',
   'clearFlyingFireflies', 'stopCharacterAudio', 'stopConozcoAudio', 'stopPiensoAudio',
+  'miIcon', 'miText', 'hydrateIcons',
 ].forEach((n) => assert.strictEqual(typeof ctx.window[n], 'function', `window.${n} debe existir`));
 console.log('✅ Funciones del app shell disponibles en window.');
 

@@ -10,8 +10,8 @@
     window._creaMsg = (document.getElementById('butMsg') && document.getElementById('butMsg').value) || '';
     const qualityEl = document.querySelector('#creaQualityRow .chip.sel');
     const catEl = document.querySelector('#creaCategoryRow .chip.sel');
-    window._creaQuality = qualityEl ? qualityEl.innerText : '';
-    window._creaCategory = catEl ? catEl.innerText : '';
+    window._creaQuality = qualityEl ? qualityEl.innerText.trim() : '';
+    window._creaCategory = catEl ? catEl.innerText.trim() : '';
     creaNext(total);
   }
 
@@ -36,7 +36,7 @@
       type: 'image',
       src: window._creaImg,
       name: `${window.userName || ''} ${window.userLastName || ''}`.trim(),
-      avatar: window.userAvatar || '🦋',
+      avatar: window.userAvatar || 'mariposa',
       butterflyName: window._creaName || 'Mi mariposa',
       quality: window._creaQuality || '',
       category: window._creaCategory || '',

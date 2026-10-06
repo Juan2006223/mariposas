@@ -10,10 +10,10 @@ async function saveMuralArtifact(tipo, contenido){
   const result = await ApiClient.guardarArtefactoMural({
     ninoId: window.userId,
     tipo,
-    autor: `${userName || 'AnÃ³nimo'} ${userLastName || ''}`.trim(),
+    autor: `${userName || 'Anónimo'} ${userLastName || ''}`.trim(),
     contenido
   });
-  if(!result || !result.success) showPersistenceNotice((result && result.error) || 'La creaciÃ³n no llegÃ³ a Neon. Intenta guardarla de nuevo.', true);
+  if(!result || !result.success) showPersistenceNotice((result && result.error) || 'La creación no llegó a Neon. Intenta guardarla de nuevo.', true);
   return result;
 }
 

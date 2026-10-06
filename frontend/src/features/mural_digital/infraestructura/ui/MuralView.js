@@ -29,7 +29,7 @@
       : (window.muralButterflies || []);
 
     if (list.length === 0) {
-      return `<div class="empty-state">Aún no hay mariposas en el mural.<br>Ve a la Estación "Pinta" y crea la tuya 🦋</div>`;
+      return `<div class="empty-state">${miIcon('vacio-mariposas')}Aún no hay mariposas en el mural.<br>Ve a la Estación "Pinta" y crea la tuya</div>`;
     }
     return `<div class="mural-grid">
     ${list.map((b, i) => {
@@ -50,11 +50,11 @@
       : (window.muralVoices || []);
 
     if (list.length === 0) {
-      return `<div class="empty-state">Aún no hay palabras en el mural.<br>Ve a la Estación "Voz" y escribe la tuya 💬</div>`;
+      return `<div class="empty-state">${miIcon('vacio-palabras')}Aún no hay palabras en el mural.<br>Ve a la Estación "Voz" y escribe la tuya</div>`;
     }
     return list.map(v => `
     <div class="voice-item">
-      <div class="voice-quote">✨ "${v.text}"</div>
+      <div class="voice-quote">${miIcon('cita')} "${v.text}"</div>
       <div class="voice-author">— ${v.name || 'Anónimo/a'}</div>
     </div>
   `).join('');
@@ -66,12 +66,12 @@
       : (window.muralFootprints || []);
 
     if (list.length === 0) {
-      return `<div class="empty-state">Aún no hay huellas en el mural.<br>Ve a la Estación "Mapa" y recorre el camino con Canelo 🐾</div>`;
+      return `<div class="empty-state">${miIcon('vacio-huellas')}Aún no hay huellas en el mural.<br>Ve a la Estación "Mapa" y recorre el camino con Canelo</div>`;
     }
     return `<div class="mural-grid">
     ${list.map(f => `
       <div class="mural-card">
-        <div class="mural-butterfly">${f.ico}</div>
+        <div class="mural-butterfly">${miIcon(f.ico)}</div>
         <div class="mural-name">${f.name || 'Anónimo/a'}</div>
         <div class="mural-name" style="opacity:0.7; font-weight:400;">${f.place}</div>
       </div>
@@ -85,11 +85,11 @@
       : (window.muralReflections || []);
 
     if (list.length === 0) {
-      return `<div class="empty-state">Aún no hay descubrimientos en el mural.<br>Ve a la Estación "Voz" (9-12) y completa las 5 huellas 💭</div>`;
+      return `<div class="empty-state">${miIcon('vacio-descubrimientos')}Aún no hay descubrimientos en el mural.<br>Ve a la Estación "Voz" (9-12) y completa las 5 huellas</div>`;
     }
     return list.map(r => `
     <div class="voice-item">
-      <div class="voice-quote">💭 "${r.text}"</div>
+      <div class="voice-quote">${miIcon('pensamiento')} "${r.text}"</div>
       <div class="voice-author">— ${r.name || 'Anónimo/a'}</div>
     </div>
   `).join('');
@@ -113,10 +113,10 @@
     <div class="station-title">Mural Digital Vivo</div>
     <div class="station-sub">Aquí se integran las mariposas creadas, las voces grabadas y las huellas del recorrido de cada participante.</div>
     <div class="mural-tabs">
-      <div class="mural-tab ${activeTab === 'mariposas' ? 'sel' : ''}" onclick="selMuralTab('mariposas')">🦋 Mariposas (${butterflies.length})</div>
-      <div class="mural-tab ${activeTab === 'voces' ? 'sel' : ''}" onclick="selMuralTab('voces')">💬 Palabras (${voices.length})</div>
-      <div class="mural-tab ${activeTab === 'huellas' ? 'sel' : ''}" onclick="selMuralTab('huellas')">🐾 Huellas (${footprints.length})</div>
-      <div class="mural-tab ${activeTab === 'reflexiones' ? 'sel' : ''}" onclick="selMuralTab('reflexiones')">💭 Descubrimientos (${reflections.length})</div>
+      <div class="mural-tab ${activeTab === 'mariposas' ? 'sel' : ''}" onclick="selMuralTab('mariposas')">${miIcon('mariposa')} Mariposas (${butterflies.length})</div>
+      <div class="mural-tab ${activeTab === 'voces' ? 'sel' : ''}" onclick="selMuralTab('voces')">${miIcon('voz')} Palabras (${voices.length})</div>
+      <div class="mural-tab ${activeTab === 'huellas' ? 'sel' : ''}" onclick="selMuralTab('huellas')">${miIcon('huella')} Huellas (${footprints.length})</div>
+      <div class="mural-tab ${activeTab === 'reflexiones' ? 'sel' : ''}" onclick="selMuralTab('reflexiones')">${miIcon('pensamiento')} Descubrimientos (${reflections.length})</div>
     </div>
     ${activeTab === 'mariposas' ? muralButterfliesHTML() : activeTab === 'voces' ? muralVoicesHTML() : activeTab === 'huellas' ? muralFootprintsHTML() : muralReflectionsHTML()}
   `;

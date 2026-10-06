@@ -1,5 +1,6 @@
 (function () {
   const scripts = [
+    'src/features/galeria_territorio/infraestructura/ui/GaleriaIcons.js',
     'src/features/galeria_territorio/dominio/GaleriaTerritorioData.js',
     'src/features/galeria_territorio/aplicacion/GaleriaTerritorioActions.js',
     'src/features/galeria_territorio/infraestructura/ui/GaleriaTerritorioView.js',

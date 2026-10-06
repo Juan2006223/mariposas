@@ -34,6 +34,7 @@ global.window = {
 };
 
 // Cargar módulos en orden
+require('./icons_setup.js');
 require(path.join(__dirname, '../frontend/src/features/estacion_mapa/dominio/MapaTerritorioData.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_mapa/dominio/MapaState.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_mapa/aplicacion/MapaActions.js'));

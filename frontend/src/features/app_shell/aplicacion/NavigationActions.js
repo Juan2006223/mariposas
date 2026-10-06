@@ -21,10 +21,10 @@ function submitName(){
   userLastName = last;
   document.getElementById('nameGate').style.display = 'none';
   const greet = document.getElementById('ageGateGreeting');
-  if(greet) greet.innerText = `Â¡Hola, ${userAvatar} ${userName}!`;
+  if(greet) greet.innerHTML = `¡Hola, ${miIcon(userAvatar)} ${miText(userName)}!`;
   document.getElementById('ageGate').style.display = 'flex';
 }
-/* Elegida la edad, se entra reciÃ©n a la app en el grupo correspondiente */
+/* Elegida la edad, se entra recién a la app en el grupo correspondiente */
 async function chooseGroup(){
   const error = document.getElementById('ageGateError');
   if(!userAge){
@@ -36,7 +36,7 @@ async function chooseGroup(){
   document.getElementById('btnG1').classList.toggle('active', g==='6-8');
   document.getElementById('btnG2').classList.toggle('active', g==='9-12');
   document.getElementById('ageGate').style.display = 'none';
-  document.querySelector('.top-sub').innerText = `${userAvatar} ${userName} ${userLastName} â€” ${userAge} aÃ±os`;
+  document.querySelector('.top-sub').innerHTML = `${miIcon(userAvatar)} ${miText(userName)} ${miText(userLastName)} — ${userAge} años`;
   render();
   if(window.ApiClient && typeof ApiClient.registrarPerfil === 'function'){
     try {
@@ -55,10 +55,10 @@ async function chooseGroup(){
   }
 }
 
-/* Cierra el turno del niÃ±o/a actual: lo ya creado queda guardado en el Mural,
-   y la app vuelve a pedir el nombre para que el prÃ³ximo niÃ±o/a empiece su turno. */
+/* Cierra el turno del niño/a actual: lo ya creado queda guardado en el Mural,
+   y la app vuelve a pedir el nombre para que el próximo niño/a empiece su turno. */
 function finishSession(){
-  const ok = confirm('Esto cierra el turno actual y vuelve al registro para otro niÃ±o/a. Â¿Quieres continuar?');
+  const ok = confirm('Esto cierra el turno actual y vuelve al registro para otro niño/a. ¿Quieres continuar?');
   if(!ok) return;
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   stopCharacterAudio();
@@ -66,7 +66,7 @@ function finishSession(){
   stopPiensoAudio();
   clearFlyingFireflies();
   micBusy = false;
-  // Reiniciar progreso de cada estaciÃ³n (las mariposas/voces YA guardadas no se tocan)
+  // Reiniciar progreso de cada estación (las mariposas/voces YA guardadas no se tocan)
   group = '6-8';
   station = 1;
   zonesPainted = new Set();
@@ -91,7 +91,7 @@ function finishSession(){
   userName = '';
   userLastName = '';
   userAge = null;
-  userAvatar = 'ðŸ¦‹';
+  userAvatar = 'mariposa';
   window.userId = null;
   const nameInput = document.getElementById('nameInput');
   if(nameInput) nameInput.value = '';

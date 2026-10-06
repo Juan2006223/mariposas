@@ -1,10 +1,10 @@
 // Componente de Onboarding Infantil Lúdico (< 150 líneas)
 const AVATARES_INFANTILES = [
-  { id: 'mariposa_sol', label: 'Sol radiante', icon: '🦋', color: 'linear-gradient(135deg, #FFC857, #D946B5)' },
-  { id: 'mariposa_rio', label: 'Río azul', icon: '✨', color: 'linear-gradient(135deg, #5B6FE8, #9B4DFF)' },
-  { id: 'oruga_valiente', label: 'Oruguita', icon: '🐛', color: 'linear-gradient(135deg, #4FB286, #FFC857)' },
-  { id: 'colibri_flor', label: 'Colibrí', icon: '🌸', color: 'linear-gradient(135deg, #D946B5, #9B4DFF)' },
-  { id: 'canelo_amigo', label: 'Canelo', icon: '🐶', color: 'linear-gradient(135deg, #B0793F, #FFC857)' }
+  { id: 'mariposa_sol', label: 'Sol radiante', icon: 'mariposa', color: 'linear-gradient(135deg, #FFC857, #D946B5)' },
+  { id: 'mariposa_rio', label: 'Río azul', icon: 'estrella', color: 'linear-gradient(135deg, #5B6FE8, #9B4DFF)' },
+  { id: 'oruga_valiente', label: 'Oruguita', icon: 'oruga', color: 'linear-gradient(135deg, #4FB286, #FFC857)' },
+  { id: 'colibri_flor', label: 'Colibrí', icon: 'colibri', color: 'linear-gradient(135deg, #D946B5, #9B4DFF)' },
+  { id: 'canelo_amigo', label: 'Canelo', icon: 'canelo', color: 'linear-gradient(135deg, #B0793F, #FFC857)' }
 ];
 
 let avatarSeleccionado = AVATARES_INFANTILES[0].id;
@@ -18,7 +18,7 @@ function renderOnboardingModal() {
 
   container.innerHTML = `
     <div style="width:min(430px,94%); display:flex; align-items:center; justify-content:space-between; gap:10px;">
-      <div style="font-size:2.6rem; animation: guideFloat 2s infinite;">🦋</div>
+      <div style="font-size:2.6rem; animation: guideFloat 2s infinite;">${miIcon('mariposa')}</div>
       <div style="flex:1; text-align:left;">
         <div class="station-title" style="font-size:1.2rem; margin:0;">Crea tu explorador/a</div>
         <div class="station-sub" style="margin:0; font-size:.86rem;">Como en un juego: datos, avatar y edad.</div>
@@ -41,7 +41,7 @@ function renderOnboardingModal() {
         <div id="av_${av.id}" onclick="seleccionarAvatar('${av.id}')" 
              title="${av.label}"
              style="width:58px; height:58px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.75rem; cursor:pointer; background:${av.color}; box-shadow:0 8px 18px rgba(0,0,0,0.25); border: 3px solid ${avatarSeleccionado === av.id ? '#fff' : 'transparent'}; transition: transform 0.2s ease;">
-          ${av.icon}
+          ${miIcon(av.icon)}
         </div>
       `).join('')}
     </div>
@@ -111,7 +111,7 @@ async function confirmarOnboardingInfantil() {
   apellidoTemporal = apellido;
   userName = nombre;
   userLastName = apellido;
-  userAvatar = AVATARES_INFANTILES.find(av => av.id === avatarSeleccionado)?.icon || '🦋';
+  userAvatar = AVATARES_INFANTILES.find(av => av.id === avatarSeleccionado)?.icon || 'mariposa';
   userAge = edadSeleccionada;
   window.userGroup = grupo;
   window.userAvatar = avatarSeleccionado;
@@ -120,7 +120,7 @@ async function confirmarOnboardingInfantil() {
   // Configurar grupo y ocultar bienvenida de inmediato; el backend guarda en segundo plano.
   if (typeof setGroup === 'function') setGroup(grupo);
   const topSub = document.querySelector('.top-sub');
-  if (topSub) topSub.innerText = `${userAvatar} ${nombre} ${apellido} — ${edadSeleccionada} años`;
+  if (topSub) topSub.innerHTML = `${miIcon(userAvatar)} ${miText(nombre)} ${miText(apellido)} — ${edadSeleccionada} años`;
   const gate = document.getElementById('nameGate');
   if (gate) gate.style.display = 'none';
   if (typeof render === 'function') render();

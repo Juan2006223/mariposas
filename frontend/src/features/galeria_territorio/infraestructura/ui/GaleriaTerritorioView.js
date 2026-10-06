@@ -1,7 +1,7 @@
 (function () {
   function renderGalleryGrid(items) {
     if (!items || items.length === 0) {
-      return `<div class="empty-state">Aún no hay fotos en la galería.<br>Muy pronto se irán agregando 📷</div>`;
+      return `<div class="empty-state">${miIcon('vacio-galeria')}Aún no hay fotos en la galería.<br>Muy pronto se irán agregando</div>`;
     }
     const thumbs = items
       .map(
@@ -20,7 +20,7 @@
 
     return `
     <div class="station-title">Galería del territorio</div>
-    <div class="station-sub">Fotos reales de los lugares de La Mariposa. Toca cualquiera para verla más grande. 📸</div>
+    <div class="station-sub">Fotos reales de los lugares de La Mariposa. Toca cualquiera para verla más grande. ${miIcon('camara')}</div>
     ${renderGalleryGrid(items)}
   `;
   }

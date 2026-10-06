@@ -7,7 +7,7 @@
     const soundEl = document.getElementById('soundHint');
     if (soundEl) {
       const sounds = window.soundBySon || (window.CreaPaletteData && window.CreaPaletteData.SOUND_BY_SON) || {};
-      soundEl.innerText = sounds[color] || '🎵 sonido: color mágico';
+      soundEl.innerHTML = miIcon('nota') + ' ' + (sounds[color] || 'sonido: color mágico');
     }
   }
 
@@ -121,7 +121,7 @@
       type: 'image',
       src,
       name: `${window.userName || ''} ${window.userLastName || ''}`.trim(),
-      avatar: window.userAvatar || '🦋',
+      avatar: window.userAvatar || 'mariposa',
       butterflyName: 'Mi mariposa pintada',
       category: 'Mariposa 6-8',
       message: `Aterriza en ${window.selectedLanding68}`,

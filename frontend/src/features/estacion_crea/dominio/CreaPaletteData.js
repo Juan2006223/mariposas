@@ -33,10 +33,10 @@
   ];
 
   const SOUND_BY_SON = {
-    '#9B4DFF': '🎵 sonido: viento del cerro',
-    '#5B6FE8': '🎵 sonido: agua de la quebrada',
-    '#FFC857': '🎵 sonido: canto de ave',
-    '#D946B5': '🎵 sonido: pasos sobre tierra',
+    '#9B4DFF': 'sonido: viento del cerro',
+    '#5B6FE8': 'sonido: agua de la quebrada',
+    '#FFC857': 'sonido: canto de ave',
+    '#D946B5': 'sonido: pasos sobre tierra',
   };
 
   const BRUSH_COLORS_912 = [
@@ -47,22 +47,22 @@
   ];
 
   const CREA_QUALITIES_912 = [
-    '🌟 Valiente',
-    '🌱 Esperanzadora',
-    '❤️ Solidaria',
-    '🌈 Alegre',
-    '🦋 Libre',
-    '🤝 Comunitaria',
-    '🌻 Resiliente',
+    { icon: 'valiente', label: 'Valiente' },
+    { icon: 'brote', label: 'Esperanzadora' },
+    { icon: 'corazon', label: 'Solidaria' },
+    { icon: 'alegre', label: 'Alegre' },
+    { icon: 'mariposa', label: 'Libre' },
+    { icon: 'manos', label: 'Comunitaria' },
+    { icon: 'girasol', label: 'Resiliente' },
   ];
 
   const CREA_CATEGORIES_912 = [
-    '🌱 Naturaleza',
-    '🏡 Territorio',
-    '🤝 Comunidad',
-    '❤️ Emociones',
-    '🧠 Memorias',
-    '🚀 Futuro',
+    { icon: 'brote', label: 'Naturaleza' },
+    { icon: 'casa', label: 'Territorio' },
+    { icon: 'manos', label: 'Comunidad' },
+    { icon: 'corazon', label: 'Emociones' },
+    { icon: 'cerebro', label: 'Memorias' },
+    { icon: 'cohete', label: 'Futuro' },
   ];
 
   const LANDING_SPOTS_68 = [

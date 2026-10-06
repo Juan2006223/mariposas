@@ -14,7 +14,7 @@
       window.mapVisited.add(i);
       const slot = document.getElementById('stampSlot' + (window.mapVisited.size - 1));
       if (slot && window.MAPA_68_STOPS && window.MAPA_68_STOPS[i]) {
-        slot.innerText = window.MAPA_68_STOPS[i].ico;
+        slot.innerHTML = miIcon(window.MAPA_68_STOPS[i].ico);
         slot.classList.add('filled');
       }
       try { if (typeof playChime === 'function') playChime(); } catch (e) {}
@@ -42,7 +42,7 @@
     const title = document.getElementById('videoModalTitle');
     const media = document.getElementById('videoModalMedia');
     const text = document.getElementById('videoModalText');
-    if (title) title.innerText = s.ico + ' ' + s.name;
+    if (title) title.innerHTML = miIcon(s.ico) + ' ' + s.name;
     if (media) {
       const src = window.MAP_VIDEOS ? window.MAP_VIDEOS[i] : null;
       media.innerHTML = videoEmbedHTML(src);
@@ -64,7 +64,7 @@
     const chips = document.getElementById('favChips');
     if (!block || !chips || !window.MAPA_68_STOPS) return;
     block.style.display = 'block';
-    chips.innerHTML = window.MAPA_68_STOPS.map((s, i) => '<div class="chip" onclick="pickMapFav(' + i + ')">' + s.ico + ' ' + s.name + '</div>').join('');
+    chips.innerHTML = window.MAPA_68_STOPS.map((s, i) => '<div class="chip" onclick="pickMapFav(' + i + ')">' + miIcon(s.ico) + ' ' + s.name + '</div>').join('');
   }
 
   function pickMapFav(i) {
@@ -96,7 +96,7 @@
     const title = document.getElementById('placeImgTitle');
     const media = document.getElementById('placeImgMedia');
     const text = document.getElementById('placeImgText');
-    if (title) title.innerText = p.ico + ' ' + p.name;
+    if (title) title.innerHTML = miIcon(p.ico) + ' ' + p.name;
     if (media) media.innerHTML = '<img src="' + p.img + '" style="width:100%; border-radius:12px; display:block;" alt="' + p.name + '">';
     if (text) text.innerText = p.imgCaption || '';
     const modal = document.getElementById('placeImgModal');
@@ -114,7 +114,7 @@
     const p = window.EXPLORO_PLACES[i];
     const bp = document.getElementById('barrioPanel');
     if (bp) {
-      bp.innerHTML = '<strong>' + p.ico + ' ' + p.name + '</strong> <span style="color:var(--ink-soft); font-size:0.72rem;">— ' + p.cat + '</span><br>' + p.desc + '<br><br><button class="tool-btn" onclick="conocerHistoria(' + i + ')">Conocer su historia</button>';
+      bp.innerHTML = '<strong>' + miIcon(p.ico) + ' ' + p.name + '</strong> <span style="color:var(--ink-soft); font-size:0.72rem;">— ' + p.cat + '</span><br>' + p.desc + '<br><br><button class="tool-btn" onclick="conocerHistoria(' + i + ')">Conocer su historia</button>';
     }
     if (p.img) { openPlaceImgModal(p); }
     const pf = document.getElementById('progFill');
@@ -133,7 +133,7 @@
     if (!window.EXPLORO_PLACES || !window.exploroQuestions) return;
     const p = window.EXPLORO_PLACES[i];
     const bp = document.getElementById('barrioPanel');
-    if (bp) bp.innerHTML = '<strong>' + p.ico + ' ' + p.name + '</strong><br>' + p.relato;
+    if (bp) bp.innerHTML = '<strong>' + miIcon(p.ico) + ' ' + p.name + '</strong><br>' + p.relato;
     const q = window.exploroQuestions[i % window.exploroQuestions.length];
     const rq = document.getElementById('reflectQuestion');
     if (rq) rq.innerText = q;
@@ -146,13 +146,13 @@
     if (typeof render === 'function') render();
     const lbl = document.getElementById('favoritePlaceLabel');
     if (lbl && window.EXPLORO_PLACES && window.EXPLORO_PLACES[i]) {
-      lbl.innerText = 'Elegiste: ' + window.EXPLORO_PLACES[i].ico + ' ' + window.EXPLORO_PLACES[i].name;
+      lbl.innerHTML = 'Elegiste: ' + miIcon(window.EXPLORO_PLACES[i].ico) + ' ' + window.EXPLORO_PLACES[i].name;
     }
   }
 
   async function finishExploroFavorite() {
     if (window.favoritePlaceIdx === null || !window.EXPLORO_PLACES) {
-      alert('Elige primero un lugar 🦋');
+      alert('Elige primero un lugar');
       return;
     }
     const footprint = {

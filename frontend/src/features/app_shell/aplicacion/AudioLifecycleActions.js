@@ -3,12 +3,12 @@ function stopCharacterAudio(){
   const audio = document.getElementById('charAudio');
   if(audio){ audio.pause(); audio.currentTime = 0; }
 }
-/* Pausa o reanuda la narraciÃ³n en curso (audio real o sÃ­ntesis de voz), segÃºn el personaje activo */
-/* Elimina cualquier luciÃ©rnaga que haya quedado "en vuelo" si el niÃ±o cambia de pantalla a mitad de la animaciÃ³n */
+/* Pausa o reanuda la narración en curso (audio real o síntesis de voz), según el personaje activo */
+/* Elimina cualquier luciérnaga que haya quedado "en vuelo" si el niño cambia de pantalla a mitad de la animación */
 function clearFlyingFireflies(){
   document.querySelectorAll('.flying-firefly').forEach(f=>f.remove());
 }
-/* NarraciÃ³n por voz (Web Speech API) con tono/velocidad tipo "personaje de caricatura" para cada relato */
+/* Narración por voz (Web Speech API) con tono/velocidad tipo "personaje de caricatura" para cada relato */
 function stopConozcoAudio(){
   const audio = document.getElementById('conozcoAudio');
   if(audio){ audio.pause(); }
@@ -19,7 +19,7 @@ function stopPiensoAudio(){
   if(audio){ audio.pause(); }
   piensoAudioPlaying = false;
 }
-/* Efecto de sonido corto y suave para CUALQUIER botÃ³n/elemento interactivo de la app */
+/* Efecto de sonido corto y suave para CUALQUIER botón/elemento interactivo de la app */
 let _clickAudioCtx = null;
 function playClickSound(){
   try{
@@ -37,9 +37,9 @@ function playClickSound(){
     o.stop(_clickAudioCtx.currentTime+0.1);
   }catch(e){}
 }
-/* Se activa con cualquier click sobre un botÃ³n o elemento interactivo (todos usan atributo onclick) */
+/* Se activa con cualquier click sobre un botón o elemento interactivo (todos usan atributo onclick) */
 document.addEventListener('click', function(e){
   if(e.target.closest('[onclick]')) playClickSound();
 }, true);
-/* ---------------- ESTACIÃ“N 4 ---------------- */
-/* ---------------- MURAL â€” solo mariposas y voces/audios ---------------- */
+/* ---------------- ESTACIÓN 4 ---------------- */
+/* ---------------- MURAL — solo mariposas y voces/audios ---------------- */

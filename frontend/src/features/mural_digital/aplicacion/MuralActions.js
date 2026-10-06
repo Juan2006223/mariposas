@@ -35,9 +35,9 @@
     const extra = document.getElementById('lightboxExtra');
     if (extra) {
       let html = '';
-      if (b.quality) html += `<div>✨ ${b.quality}</div>`;
-      if (b.category) html += `<div>🗂️ ${b.category}</div>`;
-      if (b.message) html += `<div style="margin-top:6px; font-style:italic;">💬 "${b.message}"</div>`;
+      if (b.quality) html += `<div>${miIcon('estrella')} ${miText(b.quality)}</div>`;
+      if (b.category) html += `<div>${miIcon('carpeta')} ${miText(b.category)}</div>`;
+      if (b.message) html += `<div style="margin-top:6px; font-style:italic;">${miIcon('voz')} "${b.message}"</div>`;
       extra.innerHTML = html;
     }
 

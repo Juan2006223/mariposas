@@ -25,6 +25,7 @@ global.document = {
 };
 
 // Cargar GaleriaTerritorioData
+require('./icons_setup.js');
 require('../frontend/src/features/galeria_territorio/dominio/GaleriaTerritorioData.js');
 assert.ok(window.GaleriaTerritorioData, 'GaleriaTerritorioData debe estar definido en window');
 assert.ok(Array.isArray(window.GALERIA_TERRITORIO), 'window.GALERIA_TERRITORIO debe ser un array');

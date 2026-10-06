@@ -2,6 +2,11 @@
   window.API_BASE = 'https://mariposas-production.up.railway.app/api';
 
   const shellScripts = [
+    'infraestructura/ui/AppShellIcons.js',
+    'infraestructura/ui/ShellNavIcons.js',
+    'infraestructura/ui/ShellControlIcons.js',
+    'infraestructura/ui/ShellTerritoryIcons.js',
+    'infraestructura/ui/ShellLegacyIcons.js',
     'dominio/AppAudioData.js',
     'dominio/AppState.js',
     'dominio/Station1Data.js',
@@ -79,6 +84,7 @@
   // app_shell (estado/acciones) -> app_assets -> mural_digital -> galeria_territorio
   // -> estacion_mapa -> estacion_crea -> estacion_voz -> render
   loadSequential(shellScripts, () => {
+    if (typeof window.hydrateIcons === 'function') window.hydrateIcons();
     wireStationTelemetry();
     loadScript('src/services/ApiClient.js', () => hydrateMuralFromApi());
     loadScript('src/components/OnboardingModal.js', () => {

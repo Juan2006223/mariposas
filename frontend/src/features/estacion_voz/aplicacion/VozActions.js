@@ -3,7 +3,7 @@
   function myWordsHTML() {
     const words = window.sessionWords || [];
     if (words.length === 0) return '';
-    return words.map((w) => `<span class="word-pill">✨ ${w}</span>`).join('');
+    return words.map((w) => `<span class="word-pill">${miIcon('estrella')} ${w}</span>`).join('');
   }
 
   function renderMyWords() {
@@ -81,7 +81,7 @@
       if (!document.getElementById('recWave')) return;
       wave.style.display = 'none';
       micBtn.classList.remove('active');
-      micBtn.innerText = '✓';
+      micBtn.innerHTML = miIcon('check');
       status.innerText = '¡Listo! Tu voz quedó grabada.';
       setTimeout(() => {
         if (!document.getElementById('micBtn')) return;
@@ -141,7 +141,7 @@
       window.micBusy = false;
       if (document.getElementById('micBtn')) {
         document.getElementById('micBtn').disabled = false;
-        document.getElementById('micBtn').innerText = '🎤';
+        document.getElementById('micBtn').innerHTML = miIcon('microfono');
         document.getElementById('recStatus').innerText = 'Toca el micrófono para grabar';
       }
       updateJarUI();

@@ -1,6 +1,7 @@
 // frontend/src/features/estacion_crea/infraestructura/loader.js
 (function () {
   const scripts = [
+    'src/features/estacion_crea/infraestructura/ui/CreaIcons.js',
     'src/features/estacion_crea/dominio/CreaPaletteData.js',
     'src/features/estacion_crea/dominio/CreaState.js',
     'src/features/estacion_crea/aplicacion/DrawingCanvasActions.js',

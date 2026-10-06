@@ -18,7 +18,7 @@
         <path id="armL" class="arm" d="M10 10 Q40 60 65 45" fill="none" stroke="#D946B5" stroke-width="14" stroke-linecap="round"/>
         <path id="armR" class="arm" d="M140 10 Q110 60 85 45" fill="none" stroke="#D946B5" stroke-width="14" stroke-linecap="round"/>
       </svg>
-      <button class="mic-btn" id="micBtn" onclick="startVoiceSim()">🎤</button>
+      <button class="mic-btn" id="micBtn" onclick="startVoiceSim()">${miIcon('microfono')}</button>
       <div class="rec-wave" id="recWave" style="display:none;">
         <span></span><span></span><span></span><span></span><span></span>
       </div>

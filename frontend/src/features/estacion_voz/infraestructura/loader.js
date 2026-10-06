@@ -1,6 +1,7 @@
 // frontend/src/features/estacion_voz/infraestructura/loader.js
 (function () {
   const scripts = [
+    'src/features/estacion_voz/infraestructura/ui/VozIcons.js',
     'src/features/estacion_voz/dominio/VozData.js',
     'src/features/estacion_voz/dominio/VozState.js',
     'src/features/estacion_voz/aplicacion/VozActions.js',

@@ -22,6 +22,7 @@ global.document = {
 };
 
 // Cargar MuralState
+require('./icons_setup.js');
 require('../frontend/src/features/mural_digital/dominio/MuralState.js');
 assert.ok(window.MuralState, 'MuralState debe estar definido en window');
 assert.strictEqual(window.MuralState.getActiveTab(), 'mariposas');

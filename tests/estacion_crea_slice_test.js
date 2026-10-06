@@ -37,6 +37,7 @@ global.window = {
 };
 
 // Cargar módulos en orden
+require('./icons_setup.js');
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/dominio/CreaPaletteData.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/dominio/CreaState.js'));
 require(path.join(__dirname, '../frontend/src/features/estacion_crea/aplicacion/DrawingCanvasActions.js'));

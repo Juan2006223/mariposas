@@ -1,6 +1,7 @@
 // frontend/src/features/estacion_mapa/infraestructura/loader.js
 (function () {
   const scripts = [
+    'src/features/estacion_mapa/infraestructura/ui/MapaIcons.js',
     'src/features/estacion_mapa/dominio/MapaTerritorioData.js',
     'src/features/estacion_mapa/dominio/MapaState.js',
     'src/features/estacion_mapa/aplicacion/MapaActions.js',

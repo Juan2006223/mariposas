@@ -8,15 +8,15 @@
   const PIENSO_TESTIMONY = 'El tiempo siguió pasando. Llegó el acueducto y con él las albercas en las casas. El humo de la leña se fue apagando con la llegada del gas natural, y las bandas que antes daban miedo se fueron, dejando paso a la calma y al orgullo de la comunidad.';
 
   const PIENSO_MATCH_PAIRS = [
-    { id: 'm1', ico: '🦋', label: 'Mariposa de la Reserva', matchPlant: 'p1', color: '#9B4DFF' },
-    { id: 'm2', ico: '🦋', label: 'Mariposa de la Quebrada', matchPlant: 'p2', color: '#5B6FE8' },
-    { id: 'm3', ico: '🦋', label: 'Mariposa de la Plaza', matchPlant: 'p3', color: '#D946B5' }
+    { id: 'm1', ico: 'mariposa', label: 'Mariposa de la Reserva', matchPlant: 'p1', color: '#9B4DFF' },
+    { id: 'm2', ico: 'mariposa', label: 'Mariposa de la Quebrada', matchPlant: 'p2', color: '#5B6FE8' },
+    { id: 'm3', ico: 'mariposa', label: 'Mariposa de la Plaza', matchPlant: 'p3', color: '#D946B5' }
   ];
 
   const PIENSO_MATCH_PLANTS = [
-    { id: 'p3', ico: '🌸', label: 'Flores de los jardines' },
-    { id: 'p1', ico: '🍇', label: 'Uvas silvestres' },
-    { id: 'p2', ico: '🌿', label: 'Plantas de la ribera' }
+    { id: 'p3', ico: 'flor', label: 'Flores de los jardines' },
+    { id: 'p1', ico: 'uvas', label: 'Uvas silvestres' },
+    { id: 'p2', ico: 'planta', label: 'Plantas de la ribera' }
   ];
 
   const PIENSO_MATCH_EXPLAIN = {
@@ -34,19 +34,19 @@
   ];
 
   const PIENSO_LEVELS = [
-    { n: 1, ico: '🔍', name: 'Activa tu misión' },
-    { n: 2, ico: '🕵️', name: '¿Por qué cambió?' },
-    { n: 3, ico: '🎧', name: 'Una voz que cuenta' },
-    { n: 4, ico: '🌱', name: 'La naturaleza también cuenta' },
-    { n: 5, ico: '🧩', name: 'Conecta las huellas' }
+    { n: 1, ico: 'lupa', name: 'Activa tu misión' },
+    { n: 2, ico: 'detective', name: '¿Por qué cambió?' },
+    { n: 3, ico: 'auricular', name: 'Una voz que cuenta' },
+    { n: 4, ico: 'brote', name: 'La naturaleza también cuenta' },
+    { n: 5, ico: 'rompecabezas', name: 'Conecta las huellas' }
   ];
 
   const PIENSO_BADGE_MAP = {
-    1: '🐾',
-    2: '🗺️',
-    3: '📜',
-    4: '🦋',
-    5: '🧩'
+    1: 'huella',
+    2: 'mapa',
+    3: 'pergamino',
+    4: 'mariposa',
+    5: 'rompecabezas'
   };
 
   // Compatibilidad global requerida

@@ -23,14 +23,14 @@
       audio.onended = () => {
         window.piensoAudioPlaying = false;
         const ic = document.getElementById('piensoPlayIcon');
-        if (ic) ic.innerText = '▶';
+        if (ic) ic.innerHTML = miIcon('play');
       };
       document.body.appendChild(audio);
     }
     if (window.piensoAudioPlaying) {
       audio.pause();
       window.piensoAudioPlaying = false;
-      if (icon) icon.innerText = '▶';
+      if (icon) icon.innerHTML = miIcon('play');
       return;
     }
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -38,7 +38,7 @@
     if (typeof window.stopConozcoAudio === 'function') window.stopConozcoAudio();
     audio.play().catch(() => {});
     window.piensoAudioPlaying = true;
-    if (icon) icon.innerText = '⏸';
+    if (icon) icon.innerHTML = miIcon('pause');
   }
 
   function selChipLevel1(el) {

@@ -48,7 +48,7 @@
     if (!window.pienso) window.pienso = { level: null, unlocked: new Set([1]), completed: new Set(), badges: [] };
     window.pienso.completed.add(n);
     window.pienso.unlocked.add(n + 1);
-    const badgeMap = (window.VozData && window.VozData.PIENSO_BADGE_MAP) || { 1: '🐾', 2: '🗺️', 3: '📜', 4: '🦋', 5: '🧩' };
+    const badgeMap = (window.VozData && window.VozData.PIENSO_BADGE_MAP) || { 1: 'huella', 2: 'mapa', 3: 'pergamino', 4: 'mariposa', 5: 'rompecabezas' };
     window.pienso.badges.push(badgeMap[n]);
     window.pienso.level = null;
     showHuellaToast();
@@ -70,7 +70,7 @@
     input.disabled = true;
     const btn = document.getElementById('saveReflectionBtn');
     if (btn) {
-      btn.innerText = '¡Guardado en el Mural! ✓';
+      btn.innerHTML = '¡Guardado en el Mural! ' + miIcon('check');
       btn.disabled = true;
     }
   }

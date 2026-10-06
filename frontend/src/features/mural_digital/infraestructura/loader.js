@@ -1,5 +1,6 @@
 (function () {
   const scripts = [
+    'src/features/mural_digital/infraestructura/ui/MuralIcons.js',
     'src/features/mural_digital/dominio/MuralState.js',
     'src/features/mural_digital/aplicacion/MuralActions.js',
     'src/features/mural_digital/infraestructura/ui/MuralView.js',
