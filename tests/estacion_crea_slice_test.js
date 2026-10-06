@@ -56,6 +56,7 @@ assert.strictEqual(typeof global.window.initCanvas, 'function', 'window.initCanv
 assert.strictEqual(typeof global.window.butterflySvg, 'function', 'window.butterflySvg debe ser una función');
 assert.strictEqual(typeof global.window.paintZone, 'function', 'window.paintZone debe ser una función');
 assert.strictEqual(typeof global.window.pickColor, 'function', 'window.pickColor debe ser una función');
+assert.strictEqual(typeof global.window.updateMissingHint68, 'function', 'window.updateMissingHint68 debe ser una función');
 assert.strictEqual(typeof global.window.finishDrawing, 'function', 'window.finishDrawing debe ser una función');
 
 console.log('✅ station2_68, station2_912, initCanvas y funciones de interacción existen en window.');
@@ -66,12 +67,14 @@ assert(typeof html68 === 'string', 'station2_68 debe retornar un string');
 assert(html68.includes('La mariposa que cambia de humor'), 'station2_68 debe contener el título correspondiente');
 assert(html68.includes('id="butterflySvg"'), 'station2_68 debe contener el SVG interactivo de la mariposa');
 assert(html68.includes('18 partes'), 'station2_68 debe mostrar el total real de zonas pintables');
+assert(html68.includes('missingZoneHint68'), 'station2_68 debe mostrar una pista de partes faltantes');
 const svg68 = global.window.butterflySvg();
 assert(svg68.includes('id="body" class="zone"'), 'el cuerpo debe ser zona pintable');
 assert(svg68.includes('id="head" class="zone"'), 'la cabeza debe ser zona pintable');
 assert(svg68.includes('id="antennaL" class="zone"'), 'la antena izquierda debe ser zona pintable');
 assert(svg68.includes('id="antennaR" class="zone"'), 'la antena derecha debe ser zona pintable');
 assert.strictEqual(global.window.ZONE_TOTAL_68, 18, 'el total de zonas pintables debe incluir alas, manchas, cabeza, antenas y cuerpo');
+assert.strictEqual(global.window.CreaPaletteData.ZONE_LABELS_68.head, 'cabeza', 'las zonas pintables deben tener nombres humanos');
 
 const html912Step0 = global.window.station2_912();
 assert(typeof html912Step0 === 'string', 'station2_912 debe retornar un string');

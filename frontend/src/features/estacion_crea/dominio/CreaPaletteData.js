@@ -23,6 +23,27 @@
 
   const ZONE_TOTAL_68 = Object.keys(DEFAULT_ZONE_COLORS_68).length;
 
+  const ZONE_LABELS_68 = {
+    wingLU: 'ala superior izquierda',
+    wingLD: 'ala inferior izquierda',
+    wingRU: 'ala superior derecha',
+    wingRD: 'ala inferior derecha',
+    spotLU1: 'mancha superior izquierda',
+    spotLU2: 'mancha superior izquierda pequena',
+    spotLD1: 'mancha inferior izquierda',
+    spotLD2: 'mancha inferior izquierda pequena',
+    spotRU1: 'mancha superior derecha',
+    spotRU2: 'mancha superior derecha pequena',
+    spotRD1: 'mancha inferior derecha',
+    spotRD2: 'mancha inferior derecha pequena',
+    antennaL: 'antena izquierda',
+    antennaR: 'antena derecha',
+    antennaTipL: 'punta izquierda',
+    antennaTipR: 'punta derecha',
+    body: 'cuerpo',
+    head: 'cabeza',
+  };
+
   const PALETTE_COLORS_68 = [
     ['#9B4DFF', 'violeta'],
     ['#5B6FE8', 'rio'],
@@ -83,6 +104,7 @@
 
   window.CreaPaletteData = {
     DEFAULT_ZONE_COLORS_68,
+    ZONE_LABELS_68,
     ZONE_TOTAL_68,
     PALETTE_COLORS_68,
     SOUND_BY_SON,

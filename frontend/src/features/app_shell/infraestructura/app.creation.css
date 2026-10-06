@@ -7,6 +7,11 @@
 }
 .color-blob.sel{ transform:rotate(45deg) scale(1.2); outline:3px solid #fff; outline-offset:2px;}
 .zone{ cursor:pointer; transition: fill .25s ease; }
+.zone.missing-zone{
+  stroke:#fff; stroke-width:3; filter:drop-shadow(0 0 6px rgba(255,255,255,.9));
+  animation:missingGlow 1.1s ease-in-out infinite;
+}
+@keyframes missingGlow{ 0%,100%{ opacity:1; } 50%{ opacity:.72; } }
 #butterflySvg{ transform-origin:50% 50%; }
 #butterflySvg.idle-shiver{ animation: idleShiver 1.6s ease-in-out infinite; }
 @keyframes idleShiver{ 0%,100%{ transform:rotate(0deg); } 25%{ transform:rotate(-2deg); } 75%{ transform:rotate(2deg); } }
@@ -23,6 +28,11 @@
   100%{ transform:translate(0,0) scale(1,1) rotate(0deg); }
 }
 .progress-mini{ font-size:0.72rem; color:var(--ink-soft); }
+.missing-zone-hint{
+  display:flex; align-items:center; justify-content:center; gap:6px; max-width:620px;
+  color:var(--sol); font-size:.78rem; font-weight:800; text-align:center;
+}
+.missing-zone-hint.done{ color:var(--verde); }
 .landing-map{ display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap; }
 .landing-spot{
   padding:8px 12px; border-radius:14px; background:var(--card2); border:1px solid var(--line);

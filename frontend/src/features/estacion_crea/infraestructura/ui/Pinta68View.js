@@ -35,6 +35,7 @@
       <div class="step-card">Usa el pincel: toca una parte oscura de la mariposa (alas, manchas, cabeza, antenas o cuerpo) para llenarla de color.</div>
       <div class="station-sub" id="soundHint" style="min-height:16px; margin-bottom:0;"></div>
       <div class="progress-mini" id="zoneProg">0 de ${zoneTotal} partes pintadas</div>
+      <div class="missing-zone-hint" id="missingZoneHint68">${miIcon('ojos')} Faltan ${zoneTotal} partes. Las pendientes se marcarán con brillo.</div>
       <div id="landingBlock" style="display:none; width:100%;">
         <div class="station-sub">Tu mariposa cobró vida ${miIcon('estrella')} ¿dónde aterriza?</div>
         <div class="landing-map">

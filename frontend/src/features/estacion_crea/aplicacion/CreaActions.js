@@ -18,6 +18,29 @@
     svg.classList.add('zone-jump');
   }
 
+  function getMissingZones(svg) {
+    const zones = svg ? Array.from(svg.querySelectorAll('.zone')) : [];
+    return zones.filter((zone) => !window.zonesPainted || !window.zonesPainted.has(zone.id));
+  }
+
+  function updateMissingHint(svg) {
+    const missing = getMissingZones(svg);
+    const labels = (window.CreaPaletteData && window.CreaPaletteData.ZONE_LABELS_68) || {};
+    document.querySelectorAll('.zone.missing-zone').forEach((zone) => zone.classList.remove('missing-zone'));
+    missing.forEach((zone) => zone.classList.add('missing-zone'));
+
+    const hint = document.getElementById('missingZoneHint68');
+    if (!hint) return;
+    if (!missing.length) {
+      hint.innerHTML = miIcon('check') + ' Mariposa completa. Elige dónde aterriza.';
+      hint.classList.add('done');
+      return;
+    }
+    const names = missing.slice(0, 3).map((zone) => labels[zone.id] || zone.id).join(', ');
+    const more = missing.length > 3 ? ` y ${missing.length - 3} más` : '';
+    hint.innerHTML = miIcon('ojos') + ` Faltan: ${names}${more}. Están marcadas con brillo.`;
+  }
+
   function paintZone(id) {
     const z = document.getElementById(id);
     if (!z) return;
@@ -37,6 +60,7 @@
     const total = (svg && svg.querySelectorAll('.zone').length) || window.ZONE_TOTAL_68 || 18;
     const prog = document.getElementById('zoneProg');
     if (prog) prog.innerText = `${window.zonesPainted.size} de ${total} partes pintadas`;
+    updateMissingHint(svg);
 
     triggerZoneJump(svg);
 
@@ -64,12 +88,14 @@
   window.pickColor = pickColor;
   window.paintZone = paintZone;
   window.triggerZoneJump = triggerZoneJump;
+  window.updateMissingHint68 = updateMissingHint;
   window.selLand = selLand;
 
   window.CreaActions = {
     pickColor,
     paintZone,
     triggerZoneJump,
+    updateMissingHint,
     selLand,
   };
 })();
