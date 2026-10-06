@@ -1,6 +1,7 @@
 // Carrusel compacto del mural para aprovechar el espacio de bienvenida.
 function onboardingMuralCarouselHTML() {
-  const list = Array.isArray(window.muralButterflies) ? window.muralButterflies.slice(0, 8) : [];
+  const muralList = typeof muralButterflies !== 'undefined' ? muralButterflies : window.muralButterflies;
+  const list = Array.isArray(muralList) ? muralList.slice(0, 8) : [];
   if (!list.length) {
     return `
       <div class="onboarding-mural" aria-label="Mural comunitario">

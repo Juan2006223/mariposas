@@ -86,7 +86,8 @@ assert(order.every((v, i) => v >= 0 && (i === 0 || v > order[i - 1])), 'orden de
 assert(boot.includes('src/components/OnboardingMuralCarousel.js'), 'bootstrap debe cargar el carrusel del onboarding antes del modal');
 
 // 5. Carrusel de onboarding usa datos ya hidratados del mural
-ctx.window.muralButterflies = [{ type: 'image', src: 'https://res.cloudinary.com/demo/a.jpg', butterflyName: 'Ala Sol' }];
+vm.runInContext("muralButterflies = [{ type: 'image', src: 'https://res.cloudinary.com/demo/a.jpg', butterflyName: 'Ala Sol' }];", ctx);
+ctx.window.muralButterflies = undefined;
 vm.runInContext(fs.readFileSync(path.join(root, componentFiles[0]), 'utf8'), ctx, { filename: componentFiles[0] });
 const carousel = ctx.window.onboardingMuralCarouselHTML();
 assert(carousel.includes('Mural comunitario'), 'el carrusel debe titular el mural');

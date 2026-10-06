@@ -71,6 +71,10 @@ async function hydrateMuralFromApi(){
   muralVoices = artifacts.filter(a => a.tipo === 'voz').map(a => a.parsed);
   muralFootprints = artifacts.filter(a => a.tipo === 'huella').map(a => a.parsed);
   muralReflections = artifacts.filter(a => a.tipo === 'reflexion').map(a => a.parsed);
+  window.muralButterflies = muralButterflies;
+  window.muralVoices = muralVoices;
+  window.muralFootprints = muralFootprints;
+  window.muralReflections = muralReflections;
   const gate = document.getElementById('nameGate');
   if(gate && gate.style.display !== 'none' && typeof renderOnboardingModal === 'function') renderOnboardingModal();
   if(station === 5) render();
