@@ -1,7 +1,7 @@
 // frontend/src/features/estacion_crea/infraestructura/ui/Pinta68View.js
 (function () {
   function station2_68() {
-    window._publish68 = null;
+    window._publish68State = 'idle';
     if (window.CreaState && typeof window.CreaState.reset68 === 'function') {
       window.CreaState.reset68();
     } else {

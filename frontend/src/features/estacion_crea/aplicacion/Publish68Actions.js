@@ -1,6 +1,6 @@
 // frontend/src/features/estacion_crea/aplicacion/Publish68Actions.js
-// Captura y publicación de la mariposa pintada (6-8). La UI se libera de inmediato:
-// la mariposa entra al mural local con la vista previa y la subida (Cloudinary + Neon) va en segundo plano.
+// Captura y publicación confirmada de la mariposa pintada (6-8).
+// Solo aparece en el mural cuando Cloudinary + Neon responden con éxito.
 (function () {
   const BTN_LABEL = 'Tomar foto y publicar mi mariposa';
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
@@ -77,75 +77,44 @@
     });
   }
 
-  function applySaved(local, saved) {
+  function readSavedContent(saved) {
     let cloud = saved.data && saved.data.contenido;
     if (typeof cloud === 'string') {
       try { cloud = JSON.parse(cloud); } catch (e) { cloud = null; }
     }
-    const previous = local.src;
-    Object.assign(local, cloud && typeof cloud === 'object' ? cloud : {});
-    local.pending = false;
-    local.failed = false;
-    if (local.src !== previous && /^blob:/.test(previous) && typeof URL.revokeObjectURL === 'function') {
-      setTimeout(() => URL.revokeObjectURL(previous), 3000);
-    }
+    return cloud && typeof cloud === 'object' ? cloud : {};
   }
 
-  async function persistButterfly68(job) {
+  async function saveButterfly68(base, blob) {
     const t0 = now();
-    const live = () => window._publish68 === job; // solo toca la pantalla si sigue siendo esta mariposa
-    job.state = 'saving';
-    try {
-      const toDataUri = window.blobToDataUri || blobToDataUri;
-      const src = await toDataUri(job.blob);
-      const saved = typeof window.saveMuralArtifact === 'function'
-        ? await window.saveMuralArtifact('mariposa', { ...job.base, src })
-        : null;
-      if (!saved || !saved.success) throw new Error('save-failed');
-      applySaved(job.local, saved);
-      job.state = 'done';
-      if (live()) {
-        setButton('Mariposa publicada', true);
-        setStatus('Mariposa publicada. Ya quedó guardada para verla después.');
-        notice('Mariposa guardada en el mural.', false);
-      }
-    } catch (e) {
-      job.state = 'failed';
-      job.local.pending = false;
-      job.local.failed = true;
-      if (live()) {
-        setButton('Reintentar publicación', false);
-        setStatus('Tu mariposa sigue en el mural, pero aún no se guardó. Toca Reintentar publicación.');
-      }
-      notice('No se pudo guardar tu mariposa todavía. Puedes reintentar sin perderla.', true);
-    }
+    const toDataUri = window.blobToDataUri || blobToDataUri;
+    const src = await toDataUri(blob);
+    const saved = typeof window.saveMuralArtifact === 'function'
+      ? await window.saveMuralArtifact('mariposa', { ...base, src })
+      : null;
+    if (!saved || !saved.success) throw new Error('save-failed');
     const timings = window.__butterflyTimings || {};
-    timings.guardarSegundoPlanoMs = Math.round(now() - t0);
+    timings.guardarConfirmadoMs = Math.round(now() - t0);
     window.__butterflyTimings = timings;
+    return { ...base, ...readSavedContent(saved) };
   }
 
   async function publishPaintedButterfly68() {
-    const job = window._publish68;
-    if (job && job.state === 'failed') {
-      setButton('Publicando...', true);
-      setStatus('Publicando en segundo plano...');
-      job.local.failed = false;
-      job.local.pending = true;
-      job.done = persistButterfly68(job);
-      return undefined;
-    }
-    if (job && (job.state === 'saving' || job.state === 'done')) return undefined;
+    if (window._publish68State === 'saving' || window._publish68State === 'done') return undefined;
     if (!window.selectedLanding68) {
       notice('Elige primero dónde aterriza tu mariposa.', true);
       return undefined;
     }
     setButton('Publicando...', true);
+    setStatus('Tomando foto y guardando...');
+    window._publish68State = 'saving';
     let shot;
     try {
       shot = await window.captureButterflySvg68();
     } catch (e) {
       notice(e.message || 'No se pudo tomar la foto de la mariposa.', true);
       setButton(BTN_LABEL, false);
+      window._publish68State = 'idle';
       return undefined;
     }
     const base = {
@@ -158,15 +127,26 @@
       place: window.selectedLanding68,
       colors: { ...(window.zoneColorMap || {}) },
     };
-    const local = { ...base, src: shot.previewUrl, pending: true };
-    if (!window.muralButterflies) window.muralButterflies = [];
-    window.muralButterflies.push(local);
-    const next = { base, blob: shot.blob, local, state: 'saving' };
-    window._publish68 = next;
-    setStatus('Publicando en segundo plano...');
-    const cont = document.getElementById('continueBlock2_68');
-    if (cont) cont.style.display = 'block';
-    next.done = persistButterfly68(next);
+    try {
+      setStatus('Guardando en Cloudinary y Neon...');
+      const savedItem = await saveButterfly68(base, shot.blob);
+      if (!window.muralButterflies) window.muralButterflies = [];
+      window.muralButterflies.push(savedItem);
+      setButton('Mariposa publicada', true);
+      setStatus('Mariposa publicada. Ya quedó guardada para verla después.');
+      const cont = document.getElementById('continueBlock2_68');
+      if (cont) cont.style.display = 'block';
+      notice('Mariposa guardada en el mural.', false);
+      window._publish68State = 'done';
+    } catch (e) {
+      setButton(BTN_LABEL, false);
+      setStatus('No se guardó. Revisa la conexión e intenta otra vez.');
+      notice('No se guardó la mariposa. Intenta otra vez antes de continuar.', true);
+      window._publish68State = 'idle';
+    }
+    if (shot.previewUrl && /^blob:/.test(shot.previewUrl) && typeof URL.revokeObjectURL === 'function') {
+      setTimeout(() => URL.revokeObjectURL(shot.previewUrl), 3000);
+    }
     return undefined;
   }
 
