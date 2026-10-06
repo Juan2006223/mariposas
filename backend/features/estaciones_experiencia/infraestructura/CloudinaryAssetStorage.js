@@ -1,12 +1,28 @@
 const crypto = require('crypto');
 
+function parseCloudinaryUrl(cloudinaryUrl = process.env.CLOUDINARY_URL) {
+  if (!cloudinaryUrl) return {};
+  try {
+    const parsed = new URL(cloudinaryUrl);
+    return {
+      cloudName: parsed.hostname,
+      apiKey: decodeURIComponent(parsed.username || ''),
+      apiSecret: decodeURIComponent(parsed.password || ''),
+    };
+  } catch (err) {
+    return {};
+  }
+}
+
 class CloudinaryAssetStorage {
-  constructor({
-    cloudName = process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey = process.env.CLOUDINARY_API_KEY,
-    apiSecret = process.env.CLOUDINARY_API_SECRET,
+  constructor(config = {}) {
+    const fromUrl = parseCloudinaryUrl(config.cloudinaryUrl);
+    const {
+      cloudName = process.env.CLOUDINARY_CLOUD_NAME || fromUrl.cloudName,
+      apiKey = process.env.CLOUDINARY_API_KEY || fromUrl.apiKey,
+      apiSecret = process.env.CLOUDINARY_API_SECRET || fromUrl.apiSecret,
     folder = process.env.CLOUDINARY_ASSET_FOLDER || 'mariposas',
-  } = {}) {
+    } = config;
     this.cloudName = cloudName;
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
@@ -66,4 +82,4 @@ class CloudinaryAssetStorage {
   }
 }
 
-module.exports = { CloudinaryAssetStorage };
+module.exports = { CloudinaryAssetStorage, parseCloudinaryUrl };

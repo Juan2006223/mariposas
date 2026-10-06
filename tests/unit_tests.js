@@ -8,6 +8,7 @@ const { RegistrarPerfilNinoUseCase } = require('../backend/features/onboarding_n
 
 const { ProgresoPostgresRepository } = require('../backend/features/estaciones_experiencia/infraestructura/ProgresoPostgresRepo');
 const { GuardarProgresoUseCase, GuardarArtefactoMuralUseCase } = require('../backend/features/estaciones_experiencia/aplicacion/CasosDeUsoProgreso');
+const { CloudinaryAssetStorage, parseCloudinaryUrl } = require('../backend/features/estaciones_experiencia/infraestructura/CloudinaryAssetStorage');
 
 const { MetricasPostgresRepository } = require('../backend/features/telemetria_admin/infraestructura/MetricasPostgresRepo');
 const { RegistrarMetricaUseCase, ObtenerDashboardMetricasUseCase } = require('../backend/features/telemetria_admin/aplicacion/CasosDeUsoMetricas');
@@ -125,6 +126,18 @@ async function runTests() {
     testsPasados++;
     console.log('✅ Aplicación Caso de Uso: imágenes del mural se suben a Cloudinary antes de guardar.');
 
+    const cloudinaryConfig = parseCloudinaryUrl('cloudinary://api%20key:api%2Fsecret@demo-cloud');
+    assert.strictEqual(cloudinaryConfig.cloudName, 'demo-cloud');
+    assert.strictEqual(cloudinaryConfig.apiKey, 'api key');
+    assert.strictEqual(cloudinaryConfig.apiSecret, 'api/secret');
+    const cloudinaryStorage = new CloudinaryAssetStorage({
+      cloudinaryUrl: 'cloudinary://key:secret@demo-cloud',
+    });
+    assert.strictEqual(cloudinaryStorage.estaConfigurado(), true);
+    assert.strictEqual(cloudinaryStorage.cloudName, 'demo-cloud');
+    testsPasados++;
+    console.log('✅ Infraestructura Cloudinary: CLOUDINARY_URL se parsea correctamente.');
+
     const metricasRepo = new MetricasPostgresRepository();
     const registrarMetricaUC = new RegistrarMetricaUseCase(metricasRepo);
     await registrarMetricaUC.ejecutar({ ninoId: nuevoPerfil.id, tipoEvento: 'VISITA_MAPA', categoria: 'estacion', detalles: { estacion: 4 } });
@@ -139,8 +152,8 @@ async function runTests() {
     console.error('❌ Fallo en Pruebas de Aplicación:', e.message);
   }
 
-  console.log(`\n🎉 Total de pruebas ejecutadas con éxito: ${testsPasados}/11`);
-  if (testsPasados === 11) {
+  console.log(`\n🎉 Total de pruebas ejecutadas con éxito: ${testsPasados}/12`);
+  if (testsPasados === 12) {
     console.log('🏆 SUITE DE PRUEBAS UNITARIAS: 100% EN VERDE ✅');
   } else {
     process.exit(1);
