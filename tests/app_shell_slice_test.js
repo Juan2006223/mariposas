@@ -84,6 +84,7 @@ const boot = fs.readFileSync(path.join(root, files[files.length - 1]), 'utf8');
 const order = ['app_assets', 'mural_digital', 'galeria_territorio', 'estacion_mapa', 'estacion_crea', 'estacion_voz'].map((n) => boot.indexOf(`features/${n}/infraestructura/loader.js`));
 assert(order.every((v, i) => v >= 0 && (i === 0 || v > order[i - 1])), 'orden de slices en bootstrap');
 assert(boot.includes('src/components/OnboardingMuralCarousel.js'), 'bootstrap debe cargar el carrusel del onboarding antes del modal');
+assert(boot.includes('src/services/ApiClient.js?v='), 'bootstrap debe cache-bustear ApiClient para evitar clientes viejos');
 
 // 5. Carrusel de onboarding usa datos ya hidratados del mural
 vm.runInContext("muralButterflies = [{ type: 'image', src: 'https://res.cloudinary.com/demo/a.jpg', butterflyName: 'Ala Sol' }];", ctx);

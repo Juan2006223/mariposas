@@ -95,7 +95,7 @@
   // -> estacion_mapa -> estacion_crea -> estacion_voz -> render
   loadSequential(shellScripts, () => {
     wireStationTelemetry();
-    loadScript('src/services/ApiClient.js', () => hydrateMuralFromApi());
+    loadScript('src/services/ApiClient.js?v=api-client-global-20261006', () => hydrateMuralFromApi());
     loadScript('src/components/OnboardingMuralCarousel.js', () => {
       loadScript('src/components/OnboardingModal.js', () => {
         if (typeof renderOnboardingModal === 'function') renderOnboardingModal();
