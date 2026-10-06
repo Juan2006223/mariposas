@@ -25,6 +25,7 @@ function buildAppDependencies() {
 
   return {
     repos: { perfilRepo, progresoRepo, metricasRepo },
+    services: { assetStorage },
     useCases: {
       registrarPerfilUC: new RegistrarPerfilNinoUseCase(perfilRepo),
       obtenerPerfilesUC: new ObtenerPerfilesUseCase(perfilRepo),

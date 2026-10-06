@@ -23,9 +23,11 @@ function createApp(dependencies = buildAppDependencies()) {
   app.use('/api', createExperienciasRouter(dependencies));
   app.use('/api', createTelemetriaRouter(dependencies));
   app.get('/api/health', (req, res) => {
+    const assetStorage = dependencies.services && dependencies.services.assetStorage;
     res.json({
       status: 'online',
       postgres: isPostgresConnected() ? 'conectado' : 'modo_memoria_reserva',
+      cloudinary: assetStorage && assetStorage.estaConfigurado() ? 'configurado' : 'no_configurado',
       timestamp: new Date().toISOString(),
     });
   });
