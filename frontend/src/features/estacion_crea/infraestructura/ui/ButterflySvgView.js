@@ -15,10 +15,10 @@
         <circle id="spotRU2" class="zone" cx="140" cy="38" r="6" fill="${c.spotRU2 || '#22193A'}" onclick="paintZone('spotRU2')"/>
         <circle id="spotRD1" class="zone" cx="172" cy="118" r="6" fill="${c.spotRD1 || '#22193A'}" onclick="paintZone('spotRD1')"/>
         <circle id="spotRD2" class="zone" cx="138" cy="115" r="6" fill="${c.spotRD2 || '#22193A'}" onclick="paintZone('spotRD2')"/>
-        <path d="M96,52 C88,35 78,28 74,18" stroke="#1B0F30" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path d="M104,52 C112,35 122,28 126,18" stroke="#1B0F30" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <circle cx="74" cy="18" r="2.5" fill="#1B0F30"/>
-        <circle cx="126" cy="18" r="2.5" fill="#1B0F30"/>
+        <path id="antennaL" class="zone" data-paint-stroke="true" d="M96,52 C88,35 78,28 74,18" stroke="${c.antennaL || '#1B0F30'}" stroke-width="3" fill="none" stroke-linecap="round" onclick="paintZone('antennaL')"/>
+        <path id="antennaR" class="zone" data-paint-stroke="true" d="M104,52 C112,35 122,28 126,18" stroke="${c.antennaR || '#1B0F30'}" stroke-width="3" fill="none" stroke-linecap="round" onclick="paintZone('antennaR')"/>
+        <circle id="antennaTipL" class="zone" cx="74" cy="18" r="2.5" fill="${c.antennaTipL || '#1B0F30'}" onclick="paintZone('antennaTipL')"/>
+        <circle id="antennaTipR" class="zone" cx="126" cy="18" r="2.5" fill="${c.antennaTipR || '#1B0F30'}" onclick="paintZone('antennaTipR')"/>
         <ellipse id="body" class="zone" cx="100" cy="90" rx="7" ry="32" fill="${c.body || '#1B0F30'}" stroke="transparent" stroke-width="8" onclick="paintZone('body')"/>
         <circle cx="100" cy="55" r="7" fill="#1B0F30"/>
       </svg>`;

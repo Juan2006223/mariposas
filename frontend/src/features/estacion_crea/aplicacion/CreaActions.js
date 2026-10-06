@@ -23,6 +23,7 @@
     if (!z) return;
     const color = window.currentColor68 || '#9B4DFF';
     z.setAttribute('fill', color);
+    if (z.dataset && z.dataset.paintStroke === 'true') z.setAttribute('stroke', color);
     if (!window.zoneColorMap) window.zoneColorMap = {};
     window.zoneColorMap[id] = color;
 
@@ -33,7 +34,7 @@
     }
     window.zonesPainted.add(id);
 
-    const total = (svg && svg.querySelectorAll('.zone').length) || window.ZONE_TOTAL_68 || 13;
+    const total = (svg && svg.querySelectorAll('.zone').length) || window.ZONE_TOTAL_68 || 17;
     const prog = document.getElementById('zoneProg');
     if (prog) prog.innerText = `${window.zonesPainted.size} de ${total} partes pintadas`;
 

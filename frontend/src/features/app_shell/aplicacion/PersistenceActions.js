@@ -1,9 +1,29 @@
 // frontend/src/features/app_shell/aplicacion/PersistenceActions.js
+async function ensureUserProfileForSave(){
+  if(window.userId) return true;
+  const pending = window.profileSavePromise ? await window.profileSavePromise : null;
+  if(!window.userId && pending && pending.success && pending.data) window.userId = pending.data.id;
+  if(window.userId) return true;
+  if(!window.ApiClient || typeof ApiClient.registrarPerfil !== 'function') return false;
+  const first = typeof userName !== 'undefined' ? userName : '';
+  const last = typeof userLastName !== 'undefined' ? userLastName : '';
+  const age = typeof userAge !== 'undefined' ? userAge : window.userAge;
+  if(!first || !last || !age) return false;
+  window.profileSavePromise = ApiClient.registrarPerfil({
+    nombre: `${first} ${last}`.trim(),
+    avatar: typeof userAvatar !== 'undefined' ? userAvatar : (window.userAvatar || 'mariposa'),
+    edad: age,
+    fechaNacimiento: ''
+  });
+  const created = await window.profileSavePromise;
+  if(created && created.success && created.data) window.userId = created.data.id;
+  return Boolean(window.userId);
+}
+
 async function saveMuralArtifact(tipo, contenido){
-  if(!window.ApiClient || typeof ApiClient.guardarArtefactoMural !== 'function') return;
-  const profile = window.profileSavePromise ? await window.profileSavePromise : null;
-  if(!window.userId && profile && profile.success && profile.data) window.userId = profile.data.id;
-  if(!window.userId) {
+  if(!window.ApiClient || typeof ApiClient.guardarArtefactoMural !== 'function') return {success:false, error:'API no disponible.'};
+  const hasProfile = await ensureUserProfileForSave();
+  if(!hasProfile) {
     showPersistenceNotice('Espera a que el perfil termine de guardarse antes de crear.', true);
     return {success:false};
   }
@@ -53,4 +73,3 @@ async function hydrateMuralFromApi(){
   muralReflections = artifacts.filter(a => a.tipo === 'reflexion').map(a => a.parsed);
   if(station === 5) render();
 }
-

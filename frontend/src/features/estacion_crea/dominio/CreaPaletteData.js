@@ -13,6 +13,10 @@
     spotRU2: '#22193A',
     spotRD1: '#22193A',
     spotRD2: '#22193A',
+    antennaL: '#1B0F30',
+    antennaR: '#1B0F30',
+    antennaTipL: '#1B0F30',
+    antennaTipR: '#1B0F30',
     body: '#1B0F30',
   };
 

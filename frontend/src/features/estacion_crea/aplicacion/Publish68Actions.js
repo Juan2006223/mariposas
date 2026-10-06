@@ -149,8 +149,8 @@
     }
     const base = {
       type: 'image',
-      name: `${window.userName || ''} ${window.userLastName || ''}`.trim(),
-      avatar: window.userAvatar || 'mariposa',
+      name: `${typeof userName !== 'undefined' ? userName : ''} ${typeof userLastName !== 'undefined' ? userLastName : ''}`.trim(),
+      avatar: typeof userAvatar !== 'undefined' ? userAvatar : (window.userAvatar || 'mariposa'),
       butterflyName: 'Mi mariposa pintada',
       category: 'Mariposa 6-8',
       message: `Aterriza en ${window.selectedLanding68}`,

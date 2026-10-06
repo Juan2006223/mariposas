@@ -17,10 +17,11 @@ global.document = { getElementById: (id) => els[id] || null };
 const notices = [];
 const saves = [];
 let releaseSave;
+global.userName = 'Ana';
+global.userLastName = 'Cortez';
+global.userAvatar = 'mariposa';
 global.window = {
   selectedLanding68: 'Plaza Central',
-  userName: 'Ana',
-  userLastName: 'Cortez',
   zoneColorMap: { wingLU: '#9B4DFF', body: '#FFC857' },
   muralButterflies: [],
   showPersistenceNotice: (m, err) => notices.push({ m, err }),
@@ -50,6 +51,7 @@ const tick = () => new Promise((r) => setImmediate(r));
   assert.strictEqual(saves[0].tipo, 'mariposa');
   assert.strictEqual(saves[0].contenido.src, 'data:image/jpeg;base64,AAAA', 'el backend sigue recibiendo la imagen en contenido.src');
   assert.strictEqual(saves[0].contenido.pending, undefined, 'no se envía estado local al backend');
+  assert.strictEqual(saves[0].contenido.name, 'Ana Cortez', 'usa las variables globales reales del perfil');
   console.log('✅ El item local y el botón continuar aparecen antes de que resuelva la red.');
 
   // 2. Al resolver, el item local toma la URL de Cloudinary
