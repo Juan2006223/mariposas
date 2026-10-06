@@ -124,3 +124,5 @@ const ApiClient = {
     }
   }
 };
+
+window.ApiClient = ApiClient;
