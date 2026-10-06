@@ -31,10 +31,12 @@
 
   function childSpace(events = [], arts = [], answers = []) {
     const insight = participantInsight(events, arts, answers);
+    const words = wordMap(events, arts, answers);
     return `
       <div style="display:grid;grid-template-columns:1fr;gap:14px;">
         <div style="background:rgba(255,200,87,.09);border:1px solid rgba(255,200,87,.28);border-radius:8px;padding:12px;"><b style="color:var(--sol);display:block;margin-bottom:6px;">Lectura rápida</b><div style="color:var(--ink);font-size:.86rem;line-height:1.5;">${insight}</div></div>
         <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Creaciones guardadas</b>${arts.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,210px));gap:10px;">${arts.map(muralCard).join('')}</div>` : empty()}</div>
+        <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Mapa de palabras</b>${words || empty()}</div>
         <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Avances</b>${answers.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">${answers.map(answerCard).join('')}</div>` : empty()}</div>
         <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Eventos recientes</b>${events.length ? `<ul style="padding-left:18px;margin:0;">${events.map(eventItem).join('')}</ul>` : empty()}</div>
       </div>`;
@@ -57,7 +59,7 @@
     const content = parseMaybeJson(item.contenido || {});
     const response = content.text || content.message || content.place || '';
     const src = content.src || content.imageUrl || content.url || '';
-    const image = /^https?:\/\//i.test(String(src)) ? `<img src="${attrEscape(src)}" alt="Creación guardada" style="width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:6px;margin-bottom:8px;">` : '';
+    const image = /^https?:\/\//i.test(String(src)) ? `<button onclick="openAdminCreation('${attrEscape(src)}','${attrEscape(content.butterflyName || content.nombre || 'Creación guardada')}')" aria-label="Ver creación en grande" style="display:block;width:100%;padding:0;border:0;background:#fff;border-radius:6px;cursor:zoom-in;"><img src="${attrEscape(src)}" alt="Creación guardada, abrir en grande" style="display:block;width:100%;aspect-ratio:1;object-fit:contain;border-radius:6px;"></button>` : '';
     return `<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;">${image}<div style="color:var(--ink);font-weight:800;overflow-wrap:anywhere;">${escapeHtml(content.butterflyName || content.nombre || item.tipo || 'mural')}</div><div style="color:var(--ink-soft);font-size:.75rem;">${escapeHtml(item.tipo || 'mural')} · guardado</div><button onclick="deleteMuralItem('${attrEscape(item.id)}')" style="margin-top:8px;border:1px solid var(--line);background:rgba(217,70,181,.18);color:var(--ink);border-radius:8px;padding:7px 9px;cursor:pointer;">Borrar</button>${response ? `<p style="margin:8px 0 0;color:var(--ink-soft);font-size:.82rem;overflow-wrap:anywhere;">${escapeHtml(response)}</p>` : ''}</div>`;
   }
 
@@ -73,6 +75,32 @@
     const stationText = stations.length ? `exploró las estaciones ${stations.join(', ')}` : 'todavía no registra estaciones exploradas';
     const creationText = creations.length ? `guardó ${creations.length} creación${creations.length === 1 ? '' : 'es'} (${creations.slice(0, 3).map(escapeHtml).join(', ')})` : 'todavía no tiene creaciones guardadas';
     return `${stationText}, ${creationText} y tiene ${answers.length} avance${answers.length === 1 ? '' : 's'} registrado${answers.length === 1 ? '' : 's'}.`;
+  }
+
+  function wordMap(events, arts, answers) {
+    const bag = [];
+    events.forEach(e => bag.push(e.tipo_evento || e.tipoEvento, e.categoria, parseMaybeJson(e.detalles).tipo));
+    arts.forEach(a => { const d = parseMaybeJson(a.contenido); bag.push(a.tipo, d.butterflyName, d.place, d.category); });
+    answers.forEach(a => { const d = parseMaybeJson(a.datos_actividad || a.datosActividad); bag.push(a.nombre_estacion || a.nombreEstacion, ...Object.values(d)); });
+    const counts = {};
+    bag.flatMap(value => String(value || '').toLowerCase().match(/[a-záéíóúüñ]{4,}/gi) || []).forEach(word => {
+      if (!['evento', 'avance', 'estacion', 'registro', 'mural'].includes(word)) counts[word] = (counts[word] || 0) + 1;
+    });
+    const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 14);
+    if (!ranked.length) return '';
+    const max = ranked[0][1];
+    return `<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;">${ranked.map(([word, count]) => `<span title="${count} aparición${count === 1 ? '' : 'es'}" style="font-size:${.78 + count / max * .72}rem;color:${count === max ? 'var(--sol)' : 'var(--violeta-suave)'};font-weight:${count === max ? 900 : 700};">${escapeHtml(word)}</span>`).join('')}</div>`;
+  }
+
+  function openAdminCreation(src, title) {
+    const old = document.getElementById('adminCreationViewer');
+    if (old) old.remove();
+    const viewer = document.createElement('div');
+    viewer.id = 'adminCreationViewer';
+    viewer.style.cssText = 'position:fixed;inset:0;z-index:1200;background:rgba(10,4,20,.94);display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;';
+    viewer.innerHTML = `<div style="max-width:680px;width:100%;text-align:center;color:var(--ink);"><img src="${attrEscape(src)}" alt="${attrEscape(title)}" style="max-width:100%;max-height:75vh;object-fit:contain;background:#fff;border-radius:12px;"><div style="margin-top:12px;font-weight:800;">${escapeHtml(title)}</div><button type="button" style="margin-top:12px;padding:9px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);cursor:pointer;">Cerrar</button></div>`;
+    viewer.onclick = event => { if (event.target === viewer || event.target.tagName === 'BUTTON') viewer.remove(); };
+    document.body.appendChild(viewer);
   }
 
   function pagination(page) {
@@ -91,4 +119,5 @@
   function formatValue(value) { return value && typeof value === 'object' ? JSON.stringify(value) : String(value ?? ''); }
 
   window.AdminDashboardParticipants = { childSpace, list };
+  window.openAdminCreation = openAdminCreation;
 })();
