@@ -33,34 +33,57 @@
     const insight = participantInsight(events, arts, answers);
     const words = wordMap(events, arts, answers);
     return `
-      <div style="display:grid;grid-template-columns:1fr;gap:14px;">
-        <div style="background:rgba(255,200,87,.09);border:1px solid rgba(255,200,87,.28);border-radius:8px;padding:12px;"><b style="color:var(--sol);display:block;margin-bottom:6px;">Lectura rápida</b><div style="color:var(--ink);font-size:.86rem;line-height:1.5;">${insight}</div></div>
-        <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Creaciones guardadas</b>${arts.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,210px));gap:10px;">${arts.map(muralCard).join('')}</div>` : empty()}</div>
-        <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Mapa de palabras</b>${words || empty()}</div>
-        <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Avances</b>${answers.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">${answers.map(answerCard).join('')}</div>` : empty()}</div>
-        <div><b style="color:var(--sol);display:block;margin-bottom:8px;">Eventos recientes</b>${events.length ? `<ul style="padding-left:18px;margin:0;">${events.map(eventItem).join('')}</ul>` : empty()}</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:rgba(255,200,87,.08);border:1px solid rgba(255,200,87,.24);border-radius:8px;padding:12px 14px;">
+          <b style="color:var(--sol);display:block;margin-bottom:4px;font-size:.9rem;">Lectura rápida</b>
+          <div style="color:var(--ink);font-size:.84rem;line-height:1.45;">${insight}</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-items:start;">
+          <div style="background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:12px;">
+            <b style="color:var(--sol);display:block;margin-bottom:10px;font-size:.9rem;">Creaciones guardadas</b>
+            ${arts.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;">${arts.map(muralCard).join('')}</div>` : empty()}
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:12px;">
+              <b style="color:var(--sol);display:block;margin-bottom:10px;font-size:.9rem;">Avances</b>
+              ${answers.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;">${answers.map(answerCard).join('')}</div>` : empty()}
+            </div>
+            <div style="background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:12px;">
+              <b style="color:var(--sol);display:block;margin-bottom:10px;font-size:.9rem;">Eventos recientes</b>
+              ${events.length ? `<ul style="list-style:disc;padding-left:18px;margin:0;font-size:.82rem;">${events.map(eventItem).join('')}</ul>` : empty()}
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:12px;">
+          <b style="color:var(--sol);display:block;margin-bottom:10px;font-size:.9rem;">Mapa de palabras</b>
+          ${words || empty()}
+        </div>
       </div>`;
   }
 
   function answerCard(item) {
     const data = parseMaybeJson(item.datos_actividad || item.datosActividad || {});
     const title = item.nombre_estacion || item.nombreEstacion || `Estación ${item.estacion_num || item.estacionNum || ''}`;
-    const details = Object.keys(data).length ? Object.entries(data).map(([k, v]) => `<div style="font-size:.78rem;color:var(--ink-soft);"><b style="color:var(--ink);">${escapeHtml(k)}:</b> ${escapeHtml(formatValue(v))}</div>`).join('') : '<div style="font-size:.78rem;color:var(--ink-soft);">Sin detalle adicional.</div>';
-    return `<article style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;"><div style="color:var(--violeta-suave);font-weight:900;margin-bottom:6px;">${escapeHtml(title)}</div>${details}</article>`;
+    const details = Object.keys(data).length ? Object.entries(data).map(([k, v]) => `<div style="font-size:.76rem;color:var(--ink-soft);"><span style="color:var(--ink);font-weight:600;">${escapeHtml(k)}:</span> ${escapeHtml(formatValue(v))}</div>`).join('') : '<div style="font-size:.76rem;color:var(--ink-soft);">Sin detalle adicional.</div>';
+    return `<article style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;"><div style="color:var(--violeta-suave);font-weight:800;font-size:.85rem;margin-bottom:5px;">${escapeHtml(title)}</div>${details}</article>`;
   }
 
   function eventItem(e) {
     const details = parseMaybeJson(e.detalles || {});
     const label = details.estacion ? `Estación ${details.estacion}` : (details.tipo || details.autor || e.categoria || '');
-    return `<li style="margin:6px 0;color:var(--ink-soft);"><b style="color:var(--ink);">${escapeHtml(e.tipo_evento || e.tipoEvento || 'Evento')}</b> · ${escapeHtml(label)}</li>`;
+    return `<li style="margin:4px 0;color:var(--ink-soft);"><b style="color:var(--ink);">${escapeHtml(e.tipo_evento || e.tipoEvento || 'Evento')}</b>${label ? ` · ${escapeHtml(label)}` : ''}</li>`;
   }
 
   function muralCard(item) {
     const content = parseMaybeJson(item.contenido || {});
     const response = content.text || content.message || content.place || '';
     const src = content.src || content.imageUrl || content.url || '';
-    const image = /^https?:\/\//i.test(String(src)) ? `<button onclick="openAdminCreation('${attrEscape(src)}','${attrEscape(content.butterflyName || content.nombre || 'Creación guardada')}')" aria-label="Ver creación en grande" style="display:block;width:100%;padding:0;border:0;background:#fff;border-radius:6px;cursor:zoom-in;"><img src="${attrEscape(src)}" alt="Creación guardada, abrir en grande" style="display:block;width:100%;aspect-ratio:1;object-fit:contain;border-radius:6px;"></button>` : '';
-    return `<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;">${image}<div style="color:var(--ink);font-weight:800;overflow-wrap:anywhere;">${escapeHtml(content.butterflyName || content.nombre || item.tipo || 'mural')}</div><div style="color:var(--ink-soft);font-size:.75rem;">${escapeHtml(item.tipo || 'mural')} · guardado</div><button onclick="deleteMuralItem('${attrEscape(item.id)}')" style="margin-top:8px;border:1px solid var(--line);background:rgba(217,70,181,.18);color:var(--ink);border-radius:8px;padding:7px 9px;cursor:pointer;">Borrar</button>${response ? `<p style="margin:8px 0 0;color:var(--ink-soft);font-size:.82rem;overflow-wrap:anywhere;">${escapeHtml(response)}</p>` : ''}</div>`;
+    const name = content.butterflyName || content.nombre || item.tipo || 'mural';
+    const image = /^https?:\/\//i.test(String(src)) ? `<button onclick="openAdminCreation('${attrEscape(src)}','${attrEscape(name)}')" aria-label="Ver creación en grande" style="display:block;width:100%;padding:0;border:0;background:#ffffff;border-radius:6px;cursor:zoom-in;overflow:hidden;margin-bottom:8px;"><img src="${attrEscape(src)}" alt="Creación guardada, abrir en grande" style="display:block;width:100%;height:180px;object-fit:cover;object-position:center;border-radius:6px;"></button>` : '';
+    return `<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;">${image}<div style="color:var(--ink);font-weight:800;font-size:.88rem;overflow-wrap:anywhere;">${escapeHtml(name)}</div><div style="color:var(--ink-soft);font-size:.74rem;margin:2px 0 6px;">${escapeHtml(item.tipo || 'mural')} · guardado</div><button onclick="deleteMuralItem('${attrEscape(item.id)}')" style="border:1px solid var(--line);background:rgba(217,70,181,.18);color:var(--ink);border-radius:6px;padding:5px 8px;font-size:.75rem;cursor:pointer;">Borrar</button>${response ? `<p style="margin:8px 0 0;color:var(--ink-soft);font-size:.78rem;overflow-wrap:anywhere;line-height:1.35;">${escapeHtml(response)}</p>` : ''}</div>`;
   }
 
   function participantInsight(events, arts, answers) {
