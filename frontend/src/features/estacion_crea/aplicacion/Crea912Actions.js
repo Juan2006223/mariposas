@@ -53,6 +53,51 @@
     if (typeof window.render === 'function') window.render();
   }
 
+  async function captureAndPublishDirect912() {
+    if (window._publish912State === 'saving' || window._publish912State === 'done') return;
+    const btn = document.getElementById('publishDirectBtn912');
+    const status = document.getElementById('publishDirectStatus912');
+    const updateBtn = (text, disabled) => {
+      if (!btn) return;
+      btn.innerText = text;
+      btn.disabled = disabled;
+    };
+    const updateStatus = (text, isError = false) => {
+      if (!status) return;
+      status.innerText = text;
+      status.style.color = isError ? 'var(--rosa)' : 'var(--ink-soft)';
+    };
+
+    updateBtn('Publicando…', true);
+    updateStatus('Tomando foto del lienzo...');
+    window._publish912State = 'saving';
+
+    const img = typeof window.captureCanvasImage === 'function' ? window.captureCanvasImage() : null;
+    if (!img) {
+      updateBtn('Reintentar publicación', false);
+      updateStatus('No se pudo capturar el dibujo.', true);
+      window._publish912State = 'idle';
+      return;
+    }
+    window._creaImg = img;
+    captureCreation();
+
+    updateStatus('Guardando en Cloudinary y Neon...');
+    const prevJoined = window._creaJoined;
+    await joinMural();
+
+    if (!window._creaJoined || window._creaJoined === prevJoined) {
+      updateBtn('Reintentar publicación', false);
+      updateStatus('No se guardó. Revisa la conexión e intenta otra vez.', true);
+      window._publish912State = 'idle';
+      return;
+    }
+
+    window._publish912State = 'done';
+    updateBtn('Creación publicada', true);
+    updateStatus('¡Creación publicada con éxito!');
+  }
+
   function goToMuralFromCreation() {
     window._muralTab = 'mariposas';
     if (typeof window.setStation === 'function') window.setStation(5);
@@ -80,6 +125,7 @@
   window.rotateCreation = rotateCreation;
   window.revealSymbol = revealSymbol;
   window.joinMural = joinMural;
+  window.captureAndPublishDirect912 = captureAndPublishDirect912;
   window.goToMuralFromCreation = goToMuralFromCreation;
   window.creaGoNext = creaGoNext;
 
@@ -89,6 +135,7 @@
     rotateCreation,
     revealSymbol,
     joinMural,
+    captureAndPublishDirect912,
     goToMuralFromCreation,
     creaGoNext,
   };

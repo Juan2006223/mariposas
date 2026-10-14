@@ -7,6 +7,17 @@
     // Herramientas
     borrador: `<path d="M8 31L25 13L39 25L27 40H15Z" fill="${C.rosa}"/><path d="M17 22L31 34" stroke="${C.crema}" stroke-width="3"/><path d="M5 43H25"/>`,
     deshacer: `<path d="M16 12L7 21L16 30" stroke="currentColor" stroke-width="5.5"/><path d="M8 21H28C37 21 41 27 41 36" stroke="currentColor" stroke-width="5.5"/>`,
+    rehacer: `<path d="M32 12L41 21L32 30" stroke="currentColor" stroke-width="5.5"/><path d="M40 21H20C11 21 7 27 7 36" stroke="currentColor" stroke-width="5.5"/>`,
+    guardar: `<path d="M9 7H33L41 15V41H9Z" fill="${C.sol}"/><rect x="15" y="7" width="18" height="12" rx="2" fill="${C.crema}"/><rect x="13" y="25" width="22" height="16" rx="3" fill="${C.crema}"/>`,
+    lapiz: `<path d="M33 7L41 15L17 39L9 41L11 33Z" fill="${C.sol}"/><path d="M9 41L15 39L11 35Z" fill="${C.ink}"/><path d="M28 12L36 20" stroke="${C.crema}" stroke-width="2.5"/>`,
+    marcador: `<path d="M31 7L41 17L22 36L12 26Z" fill="${C.rosa}"/><path d="M12 26L7 41L22 36Z" fill="${C.sol}"/><path d="M27 11L37 21" stroke="${C.crema}" stroke-width="2.5"/>`,
+    relleno: `<path d="M11 22L24 9L35 20L22 33Z" fill="${C.rio}"/><path d="M31 16C37 14 43 19 41 26C39 31 34 32 35 38" stroke="${C.rio}" stroke-width="3.5"/><circle cx="36" cy="41" r="3" fill="${C.rio}"/>`,
+    formas: `<rect x="7" y="15" width="20" height="20" rx="4" fill="${C.vio}"/><circle cx="33" cy="29" r="10" fill="${C.verde}"/>`,
+    selector: `<path d="M33 7L41 15L27 29L21 27L19 21Z" fill="${C.rio}"/><path d="M19 21L9 37L7 41L11 39L27 29" stroke="${C.rio}" stroke-width="3"/><circle cx="10" cy="40" r="1.8" fill="${C.rio}"/>`,
+    mover: `<path d="M24 6V42M6 24H42" stroke="${C.rio}" stroke-width="4.5"/><path d="M24 6L19 11M24 6L29 11M24 42L19 37M24 42L29 37M6 24L11 19M6 24L11 29M42 24L37 19M42 24L37 29" stroke="${C.rio}" stroke-width="3"/>`,
+    zoom_mas: `<circle cx="21" cy="21" r="13" stroke="currentColor" stroke-width="4"/><path d="M31 31L43 43" stroke="currentColor" stroke-width="5.5"/><path d="M16 21H26M21 16V26" stroke="currentColor" stroke-width="3"/>`,
+    zoom_menos: `<circle cx="21" cy="21" r="13" stroke="currentColor" stroke-width="4"/><path d="M31 31L43 43" stroke="currentColor" stroke-width="5.5"/><path d="M16 21H26" stroke="currentColor" stroke-width="3"/>`,
+    mas: `<path d="M24 10V38M10 24H38" stroke="currentColor" stroke-width="5"/>`,
     escoba: `<path d="M39 4L23 25" stroke="${C.cafe}" stroke-width="4.5"/><path d="M27 21L15 24C8 30 8 38 10 44C19 45 29 39 31 29Z" fill="${C.sol}"/>
       <path d="M15 31L19 40M21 28L24 38" stroke-width="2"/>`,
     giro: `<path d="M9 24H39M17 14L7 24L17 34M31 14L41 24L31 34" stroke="currentColor" stroke-width="5"/>`,
