@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-console.log('🧪 Iniciando verificación del slice estacion_crea...');
+console.log('🧪 Iniciando verificación del slice estacion_crea (Core y Herramientas)...');
 
 const root = path.join(__dirname, '..');
 const creaDir = path.join(root, 'frontend/src/features/estacion_crea');
@@ -42,20 +42,21 @@ const mockDoc = {
         },
         getContext() {
           return {
-            canvas: { width: 340, height: 200 },
+            canvas: { width: 640, height: 400 },
             fillStyle: '',
             fillRect() {},
-            getImageData() { return { data: [1, 2, 3] }; },
+            getImageData() { return { data: [155, 77, 255, 255] }; },
             putImageData() {},
             beginPath() {},
             moveTo() {},
             lineTo() {},
             bezierCurveTo() {},
+            ellipse() {},
             stroke() {},
             clearRect() {}
           };
         },
-        getBoundingClientRect() { return { left: 0, top: 0, width: 340, height: 200 }; },
+        getBoundingClientRect() { return { left: 0, top: 0, width: 640, height: 400 }; },
         toDataURL(fmt) { return `data:${fmt};base64,sampledrawingdata123`; }
       };
     }
@@ -76,7 +77,6 @@ const sandbox = {
   userLastName: 'Rojas',
   userAvatar: 'mariposa',
   muralButterflies: [],
-  saveMuralArtifact: async () => ({ success: true, data: { contenido: { src: 'https://res.cloudinary.com/test/image.jpg' } } })
 };
 sandbox.window = sandbox;
 vm.createContext(sandbox);
@@ -113,73 +113,44 @@ sandbox.undoLastStroke();
 sandbox.redoStroke();
 console.log('✅ Deshacer y rehacer ejecutados correctamente.');
 
-// 5. Probar captura y publicación directa (flujo real)
-(async () => {
-  let saveCalls = 0;
-  sandbox.saveMuralArtifact = async (tipo, art) => {
-    saveCalls++;
-    assert.strictEqual(tipo, 'dibujo');
-    assert(art.src.startsWith('data:image/jpeg'), 'Artefacto debe enviar data URI del canvas al backend');
-    assert.strictEqual(art.name, 'Camila Rojas');
-    return { success: true, data: { contenido: { src: 'https://res.cloudinary.com/demo/image/upload/v123/crea.jpg' } } };
-  };
+// 5. Pruebas de cambio real de herramientas en el canvas
+sandbox.selectStudioTool('lapiz');
+assert.strictEqual(sandbox.activeStudioTool, 'lapiz', 'Herramienta activa debe ser lapiz');
+assert.strictEqual(sandbox.brushSize, 3, 'Lápiz debe tener grosor fino de 3px');
 
-  await sandbox.captureAndPublishDirect912();
-  assert.strictEqual(saveCalls, 1, 'saveMuralArtifact debe llamarse una vez');
-  assert.strictEqual(sandbox._creaJoined, true, '_creaJoined debe ser true tras guardado');
-  assert.strictEqual(sandbox._publish912State, 'done', '_publish912State debe ser done');
+sandbox.selectStudioTool('marcador');
+assert.strictEqual(sandbox.activeStudioTool, 'marcador', 'Herramienta activa debe ser marcador');
+assert.strictEqual(sandbox.brushMode, 'marker', 'Marcador debe activar brushMode marker');
+assert.strictEqual(sandbox.brushSize, 14, 'Marcador debe tener grosor de 14px');
 
-  // Prevenir duplicados
-  await sandbox.captureAndPublishDirect912();
-  assert.strictEqual(saveCalls, 1, 'Segunda pulsación no debe disparar publicación duplicada');
-  console.log('✅ Publicación directa conectada con saveMuralArtifact y prevención de duplicados.');
+sandbox.selectStudioTool('borrador');
+assert.strictEqual(sandbox.activeStudioTool, 'borrador', 'Herramienta activa debe ser borrador');
+assert.strictEqual(sandbox.erasing, true, 'Borrador debe activar flag erasing');
 
-  // 6. Probar renderStep1 estructura visual
-  const step1Html = sandbox.Crea912View.renderStep1(6);
-  assert(step1Html.includes('Mi mesa de dibujo'), 'Debe contener título Mi mesa de dibujo');
-  assert(step1Html.includes('drawCanvas'), 'Debe contener lienzo drawCanvas');
-  assert(step1Html.includes('Deshacer') && step1Html.includes('Rehacer'), 'Debe tener botones Deshacer y Rehacer');
-  assert(step1Html.includes('strokePreviewCanvas'), 'Debe tener canvas de preview de trazo');
-  assert(step1Html.includes('publishDirectBtn912'), 'Debe tener botón de publicación directa');
-  // 7. Probar flujo de guardado real y lectura en AdminDashboardParticipants
-  const adminFile = path.join(root, 'frontend/src/features/telemetria_admin/infraestructura/ui/AdminDashboardParticipants.js');
-  const adminCode = fs.readFileSync(adminFile, 'utf8');
-  const adminSandbox = { console, window: null, escapeHtml: (s) => s, attrEscape: (s) => s, empty: () => '' };
-  adminSandbox.window = adminSandbox;
-  vm.createContext(adminSandbox);
-  vm.runInContext(adminCode, adminSandbox);
+sandbox.selectStudioTool('mover');
+assert.strictEqual(sandbox.activeStudioTool, 'mover', 'Herramienta activa debe ser mover');
+const mockCanvasEl = sandbox.document.getElementById('drawCanvas');
+assert.strictEqual(mockCanvasEl.style.cursor, 'grab', 'Cursor debe ser grab para mover');
 
-  const mockArtifact = {
-    id: 'art-99',
-    tipo: 'dibujo',
-    contenido: JSON.stringify({
-      src: 'https://res.cloudinary.com/test-cloud/image/upload/v12345/dibujo.jpg',
-      butterflyName: 'Mi dibujo territorial',
-      place: 'Plaza Central'
-    })
-  };
-  const adminHtml = adminSandbox.AdminDashboardParticipants.childSpace([], [mockArtifact], []);
-  assert(adminHtml.includes('https://res.cloudinary.com/test-cloud/image/upload/v12345/dibujo.jpg'), 'Admin debe mostrar imagen de Cloudinary en src');
-  assert(adminHtml.includes('Mi dibujo territorial'), 'Admin debe mostrar el título de la creación guardada');
-  assert(adminHtml.includes('openAdminCreation'), 'Admin debe permitir abrir la imagen en visor grande al click');
-  console.log('✅ Verificado: la creación guardada viaja con su URL de Cloudinary y el admin la muestra en Creaciones guardadas con visor.');
+let drawStrokeCalled = false;
+const originalStroke = sandbox.ctx.stroke;
+sandbox.ctx.stroke = () => { drawStrokeCalled = true; };
+mockCanvasEl.onpointerdown({ clientX: 10, clientY: 10 });
+mockCanvasEl.onpointermove({ clientX: 20, clientY: 20 });
+assert.strictEqual(drawStrokeCalled, false, 'Herramienta mover no debe pintar en canvas');
+sandbox.ctx.stroke = originalStroke;
 
-  // 8. Probar que si falla la persistencia, no se marca éxito y se permite reintentar
-  sandbox._publish912State = 'idle';
-  sandbox._creaJoined = false;
-  let failCalled = false;
-  sandbox.saveMuralArtifact = async () => {
-    failCalled = true;
-    return { success: false, error: 'Database timeout' };
-  };
-  await sandbox.captureAndPublishDirect912();
-  assert.strictEqual(failCalled, true);
-  assert.strictEqual(sandbox._publish912State, 'idle', 'Fallo debe mantener estado idle para reintentar');
-  assert.strictEqual(sandbox._creaJoined, false, 'Fallo no debe marcarse como joined');
-  console.log('✅ Verificado: fallo de persistencia no marca éxito y permite reintentar.');
+sandbox.selectStudioTool('selector');
+assert.strictEqual(sandbox.activeStudioTool, 'selector', 'Herramienta activa debe ser selector');
+mockCanvasEl.onpointerdown({ clientX: 10, clientY: 10 });
+assert.strictEqual(sandbox.brushColor, '#9B4DFF', 'Selector debe tomar color del pixel del canvas');
 
-  console.log('🎉 Todas las pruebas de estacion_crea pasaron con éxito.');
-})().catch((err) => {
-  console.error('❌ Error en pruebas:', err);
-  process.exit(1);
-});
+// 6. Probar renderStep1 estructura visual y dimensiones responsive
+const step1Html = sandbox.Crea912View.renderStep1(6);
+assert(step1Html.includes('Mi mesa de dibujo'), 'Debe contener título Mi mesa de dibujo');
+assert(step1Html.includes('width="640" height="400"'), 'Canvas debe tener resolución ampliada 640x400');
+assert(step1Html.includes('Gira tu dispositivo para dibujar con más espacio.'), 'Debe contener aviso de rotación');
+assert(step1Html.includes('Deshacer') && step1Html.includes('Rehacer'), 'Debe tener botones Deshacer y Rehacer');
+assert(step1Html.includes('publishDirectBtn912'), 'Debe tener botón de publicación directa');
+
+console.log('🎉 Pruebas de estacion_crea_test pasaron con éxito.');

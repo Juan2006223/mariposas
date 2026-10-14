@@ -64,17 +64,41 @@
       </div>`;
   }
 
+  const TEXT_MAP = {
+    visita_estacion: 'Visitó una estación',
+    creacion_mural: 'Guardó una creación',
+    avance_estacion: 'Avanzó en una estación',
+    registro_perfil: 'Registro de perfil',
+    perfil: 'Perfil',
+    onboarding: 'Inicio',
+    creacion: 'Creación',
+    estacion: 'Estación',
+    dibujo: 'Dibujo',
+    mural: 'Mural',
+  };
+
+  function friendlyText(val) {
+    if (!val) return '';
+    const key = String(val).trim().toLowerCase();
+    if (TEXT_MAP[key]) return TEXT_MAP[key];
+    const clean = key.replace(/_/g, ' ');
+    return clean.charAt(0).toUpperCase() + clean.slice(1);
+  }
+
   function answerCard(item) {
     const data = parseMaybeJson(item.datos_actividad || item.datosActividad || {});
-    const title = item.nombre_estacion || item.nombreEstacion || `Estación ${item.estacion_num || item.estacionNum || ''}`;
-    const details = Object.keys(data).length ? Object.entries(data).map(([k, v]) => `<div style="font-size:.76rem;color:var(--ink-soft);"><span style="color:var(--ink);font-weight:600;">${escapeHtml(k)}:</span> ${escapeHtml(formatValue(v))}</div>`).join('') : '<div style="font-size:.76rem;color:var(--ink-soft);">Sin detalle adicional.</div>';
-    return `<article style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;"><div style="color:var(--violeta-suave);font-weight:800;font-size:.85rem;margin-bottom:5px;">${escapeHtml(title)}</div>${details}</article>`;
+    const stationName = item.nombre_estacion || item.nombreEstacion;
+    const title = stationName ? friendlyText(stationName) : `Estación ${item.estacion_num || item.estacionNum || ''}`;
+    const details = Object.keys(data).length ? Object.entries(data).map(([k, v]) => `<div style="font-size:.76rem;color:var(--ink-soft);overflow-wrap:anywhere;"><span style="color:var(--ink);font-weight:600;">${escapeHtml(friendlyText(k))}:</span> ${escapeHtml(formatValue(v))}</div>`).join('') : '<div style="font-size:.76rem;color:var(--ink-soft);">Sin detalle adicional.</div>';
+    return `<article style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;"><div style="color:var(--violeta-suave);font-weight:800;font-size:.85rem;margin-bottom:5px;overflow-wrap:anywhere;">${escapeHtml(title)}</div>${details}</article>`;
   }
 
   function eventItem(e) {
+    const rawType = e.tipo_evento || e.tipoEvento || 'Evento';
+    const typeLabel = friendlyText(rawType);
     const details = parseMaybeJson(e.detalles || {});
-    const label = details.estacion ? `Estación ${details.estacion}` : (details.tipo || details.autor || e.categoria || '');
-    return `<li style="margin:4px 0;color:var(--ink-soft);"><b style="color:var(--ink);">${escapeHtml(e.tipo_evento || e.tipoEvento || 'Evento')}</b>${label ? ` · ${escapeHtml(label)}` : ''}</li>`;
+    const label = details.estacion ? `Estación ${details.estacion}` : (details.tipo ? friendlyText(details.tipo) : (details.autor || e.categoria || ''));
+    return `<li style="margin:4px 0;color:var(--ink-soft);overflow-wrap:anywhere;"><b style="color:var(--ink);">${escapeHtml(typeLabel)}</b>${label ? ` · ${escapeHtml(label)}` : ''}</li>`;
   }
 
   function muralCard(item) {
@@ -83,7 +107,7 @@
     const src = content.src || content.imageUrl || content.url || '';
     const name = content.butterflyName || content.nombre || item.tipo || 'mural';
     const image = /^https?:\/\//i.test(String(src)) ? `<button onclick="openAdminCreation('${attrEscape(src)}','${attrEscape(name)}')" aria-label="Ver creación en grande" style="display:block;width:100%;padding:0;border:0;background:#ffffff;border-radius:6px;cursor:zoom-in;overflow:hidden;margin-bottom:8px;"><img src="${attrEscape(src)}" alt="Creación guardada, abrir en grande" style="display:block;width:100%;height:180px;object-fit:cover;object-position:center;border-radius:6px;"></button>` : '';
-    return `<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;">${image}<div style="color:var(--ink);font-weight:800;font-size:.88rem;overflow-wrap:anywhere;">${escapeHtml(name)}</div><div style="color:var(--ink-soft);font-size:.74rem;margin:2px 0 6px;">${escapeHtml(item.tipo || 'mural')} · guardado</div><button onclick="deleteMuralItem('${attrEscape(item.id)}')" style="border:1px solid var(--line);background:rgba(217,70,181,.18);color:var(--ink);border-radius:6px;padding:5px 8px;font-size:.75rem;cursor:pointer;">Borrar</button>${response ? `<p style="margin:8px 0 0;color:var(--ink-soft);font-size:.78rem;overflow-wrap:anywhere;line-height:1.35;">${escapeHtml(response)}</p>` : ''}</div>`;
+    return `<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;">${image}<div style="color:var(--ink);font-weight:800;font-size:.88rem;overflow-wrap:anywhere;">${escapeHtml(name)}</div><div style="color:var(--ink-soft);font-size:.74rem;margin:2px 0 6px;">${escapeHtml(friendlyText(item.tipo || 'mural'))} · guardado</div><button onclick="deleteMuralItem('${attrEscape(item.id)}')" style="border:1px solid var(--line);background:rgba(217,70,181,.18);color:var(--ink);border-radius:6px;padding:5px 8px;font-size:.75rem;cursor:pointer;">Borrar</button>${response ? `<p style="margin:8px 0 0;color:var(--ink-soft);font-size:.78rem;overflow-wrap:anywhere;line-height:1.35;">${escapeHtml(response)}</p>` : ''}</div>`;
   }
 
   function participantInsight(events, arts, answers) {
@@ -107,12 +131,15 @@
     answers.forEach(a => { const d = parseMaybeJson(a.datos_actividad || a.datosActividad); bag.push(a.nombre_estacion || a.nombreEstacion, ...Object.values(d)); });
     const counts = {};
     bag.flatMap(value => String(value || '').toLowerCase().match(/[a-záéíóúüñ]{4,}/gi) || []).forEach(word => {
-      if (!['evento', 'avance', 'estacion', 'registro', 'mural'].includes(word)) counts[word] = (counts[word] || 0) + 1;
+      if (!['evento', 'avance', 'estacion', 'registro', 'mural'].includes(word)) {
+        const clean = friendlyText(word);
+        counts[clean] = (counts[clean] || 0) + 1;
+      }
     });
     const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 14);
     if (!ranked.length) return '';
     const max = ranked[0][1];
-    return `<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;">${ranked.map(([word, count]) => `<span title="${count} aparición${count === 1 ? '' : 'es'}" style="font-size:${.78 + count / max * .72}rem;color:${count === max ? 'var(--sol)' : 'var(--violeta-suave)'};font-weight:${count === max ? 900 : 700};">${escapeHtml(word)}</span>`).join('')}</div>`;
+    return `<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;">${ranked.map(([word, count]) => `<span title="${count} aparición${count === 1 ? '' : 'es'}" style="font-size:${.78 + count / max * .72}rem;color:${count === max ? 'var(--sol)' : 'var(--violeta-suave)'};font-weight:${count === max ? 900 : 700};overflow-wrap:anywhere;">${escapeHtml(word)}</span>`).join('')}</div>`;
   }
 
   function openAdminCreation(src, title) {

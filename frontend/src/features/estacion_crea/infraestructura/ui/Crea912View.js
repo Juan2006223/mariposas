@@ -25,13 +25,16 @@
       </div>
 
       <div style="text-align:center;margin-bottom:10px;">
-        <div class="action-nudge" style="background:#3b1e6d;border:1px solid #5a329e;color:#E7D4FF;padding:6px 14px;border-radius:999px;font-size:0.75rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+        <div class="action-nudge" style="background:#3b1e6d;border:1px solid #5a329e;color:#E7D4FF;padding:6px 14px;border-radius:999px;font-size:0.75rem;font-weight:700;display:inline-flex;align-items:center;gap:6px;overflow-wrap:anywhere;">
           ${miIcon('dedo')} Toca el lienzo y arrastra tu dedo para pintar
+        </div>
+        <div class="rotate-device-hint" style="display:none;margin-top:6px;font-size:0.75rem;color:var(--sol);font-weight:700;">
+          ${miIcon('giro')} Gira tu dispositivo para dibujar con más espacio.
         </div>
       </div>
 
-      <div class="canvas-wrap" style="background:#ffffff;border-radius:16px;padding:8px;box-shadow:0 6px 20px rgba(0,0,0,0.35);overflow:hidden;position:relative;">
-        <canvas id="drawCanvas" width="340" height="200" style="display:block;width:100%;height:190px;background:#ffffff;border-radius:12px;touch-action:none;cursor:crosshair;"></canvas>
+      <div class="canvas-wrap" style="background:#ffffff;border-radius:16px;padding:8px;box-shadow:0 6px 20px rgba(0,0,0,0.35);overflow:hidden;position:relative;width:100%;max-width:760px;margin:0 auto;">
+        <canvas id="drawCanvas" width="640" height="400" style="display:block;width:100%;height:auto;aspect-ratio:16/10;max-height:55vh;background:#ffffff;border-radius:12px;touch-action:none;cursor:crosshair;"></canvas>
       </div>
 
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;">

@@ -33,14 +33,27 @@
   function selectStudioTool(toolName) {
     window.activeStudioTool = toolName;
     document.querySelectorAll('.studio-tool-btn').forEach((b) => {
-      b.classList.toggle('active', b.dataset.tool === toolName);
+      const isSel = b.dataset.tool === toolName;
+      b.classList.toggle('active', isSel);
+      b.style.background = isSel ? '#9B4DFF' : 'var(--card)';
+      b.style.boxShadow = isSel ? '0 0 10px rgba(155,77,255,0.45)' : 'none';
     });
+
+    const canvas = document.getElementById('drawCanvas');
+    if (canvas) {
+      if (toolName === 'mover') canvas.style.cursor = 'grab';
+      else if (toolName === 'selector') canvas.style.cursor = 'crosshair';
+      else if (toolName === 'relleno') canvas.style.cursor = 'cell';
+      else if (toolName === 'borrador') canvas.style.cursor = 'cell';
+      else canvas.style.cursor = 'crosshair';
+    }
+
     if (toolName === 'borrador') {
       window.erasing = true;
     } else {
       window.erasing = false;
-      if (toolName === 'lapiz') { window.brushMode = 'round'; window.brushSize = 4; }
-      else if (toolName === 'marcador') { window.brushMode = 'marker'; window.brushSize = 13; }
+      if (toolName === 'lapiz') { window.brushMode = 'round'; window.brushSize = 3; }
+      else if (toolName === 'marcador') { window.brushMode = 'marker'; window.brushSize = 14; }
       else if (toolName === 'pincel') { window.brushMode = 'round'; }
       const slider = document.getElementById('brushSizeSlider');
       if (slider) slider.value = window.brushSize || 7;

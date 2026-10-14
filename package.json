@@ -4,7 +4,7 @@
   "description": "Plataforma lúdica comunitaria e interactiva para niñas y niños con arquitectura hexagonal y panel de administración.",
   "main": "backend/server.js",
   "scripts": {
-    "test": "node tests/unit_tests.js",
+    "test": "node tests/unit_tests.js && node tests/estacion_crea_test.js && node tests/estacion_crea_publish_test.js",
     "start:server": "node backend/server.js",
     "start": "node backend/server.js"
   },
