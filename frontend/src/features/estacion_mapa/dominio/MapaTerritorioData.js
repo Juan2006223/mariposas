@@ -21,7 +21,7 @@
     0: null,
     1: 'https://www.youtube.com/watch?v=ArnPfrazTnE',
     2: 'https://www.youtube.com/watch?v=kUoq2evBodY',
-    3: 'https://www.youtube.com/watch?v=XfYpdl90868'
+    3: 'https://www.youtube.com/watch?v=rVcn8ikP0FE'
   };
 
   const EXPLORO_PLACES = [
