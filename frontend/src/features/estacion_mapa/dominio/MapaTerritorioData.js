@@ -17,7 +17,12 @@
     { ico: 'burrito', name: 'Canelo el Burrito' }
   ].map((s, i) => ({ ...s, text: hitos[i] }));
 
-  const MAP_VIDEOS = { 0: null, 1: null, 2: null, 3: null };
+  const MAP_VIDEOS = {
+    0: 'https://www.youtube.com/watch?v=ArnPfrazTnE',
+    1: 'https://www.youtube.com/watch?v=kUoq2evBodY',
+    2: 'https://www.youtube.com/watch?v=rVcn8ikP0FE',
+    3: 'https://www.youtube.com/watch?v=XfYpdl90868'
+  };
 
   const EXPLORO_PLACES = [
     { ico: 'vecinos', name: 'Plaza Central', cat: 'Punto de encuentro', c: 'var(--rosa)', desc: 'El corazón del barrio: antes fue un cauce natural de agua, hoy es donde se celebran las fiestas comunitarias.', relato: 'Aquí los niños juegan después del colegio y los vecinos se encuentran cada fin de semana.', get img() { return typeof window !== 'undefined' ? window.PLAZA_CENTRAL_IMG : ''; }, imgCaption: 'La plaza, con las casas coloridas de La Mariposa trepando por la montaña.', pos: { left: '41%', top: '78%' } },
